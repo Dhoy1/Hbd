@@ -9,9 +9,9 @@
 const CONFIG = {
 
   // ── Identitas ──────────────────────────────────────────────
-  recipientName : "Kamu",            // Nama penerima
-  senderName    : "Someone Special", // Nama kamu (pengirim)
-  pageTitle     : "A Little Birthday Journey 🎂",
+  recipientName: "Risti Ariani",            // Nama penerima
+  senderName: "Mas Idoy Ganteng Pake Banget", // Nama kamu (pengirim)
+  pageTitle: "A Little Birthday Journey 🎂",
 
   // ── Scene 1 — Pembuka ──────────────────────────────────────
   openingMessage: "Kayaknya ada sesuatu yang spesial dan rahasia buat kamu hari ini...",
@@ -64,8 +64,8 @@ const CONFIG = {
 
   // ── Scene 5 — Prank Zonk Sebelum Hadiah Utama ───────────────
   zonkPrize: {
-    badge   : "🎉 SELAMAT! KAMU MENANG:",
-    title   : "Voucher Gratis Overthinking 1 Tahun! 🧠",
+    badge: "🎉 SELAMAT! KAMU MENANG:",
+    title: "Voucher Gratis Overthinking 1 Tahun! 🧠",
     subtitle: "Berlaku setiap jam 2 pagi sambil scroll medsos dan mikirin hal random.",
     fakeButton: "Ambil Voucher",
     realNotice: "Eits, bercanda ding! Mana mungkin kadonya cuma begituan... 😜",
@@ -110,9 +110,9 @@ The world is truly a little better with you in it.`,
   closingMessage: "With love,",
 
   // ── Pengaturan Audio & Efek ────────────────────────────────
-  musicPath      : "./assets/audio/bgm.mp3",
-  musicVolume    : 0.25,   // Volume musik latar (0.0 – 1.0)
-  soundEffects   : true,   // Efek suara sintesis (Web Audio API lokal)
-  hapticFeedback : true    // Getaran pelukan di smartphone Android (Vibration API)
+  musicPath: "./assets/audio/bgm.mp3",
+  musicVolume: 0.25,   // Volume musik latar (0.0 – 1.0)
+  soundEffects: true,   // Efek suara sintesis (Web Audio API lokal)
+  hapticFeedback: true    // Getaran pelukan di smartphone Android (Vibration API)
 
 };

@@ -188,12 +188,18 @@ const Haptics = {
    MAIN APP CONTROLLER
    ============================================================ */
 const App = {
-  currentScene : 1,
-  totalScenes  : 6,
-  carouselIndex: 0,
-  typingTimer  : null,
-  typingDone   : false,
-  musicReady   : false,
+  currentScene   : 1,
+  totalScenes    : 6,
+  carouselIndex  : 0,
+  typingTimer    : null,
+  typingDone     : false,
+  musicReady     : false,
+
+  // Scene 1 State
+  envelopeOpened : false,
+
+  // Scene 2 State
+  scanInterval   : null,
 
   // Scene 3 Whack-a-Bintang Usil State
   whackScore        : 0,
@@ -359,11 +365,10 @@ const App = {
     const reveal   = document.getElementById('opening-reveal');
     const lid      = document.getElementById('env-lid');
     const letter   = document.getElementById('env-letter');
-    let opened     = false;
 
     btnOpen.addEventListener('click', () => {
-      if (opened) return;
-      opened = true;
+      if (this.envelopeOpened) return;
+      this.envelopeOpened = true;
 
       Sound.playPaper();
       Haptics.tap();
@@ -394,6 +399,11 @@ const App = {
           btnNext.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }, 400);
       }, 700);
+    });
+
+    // Also allow tapping directly on the envelope
+    envelope?.addEventListener('click', () => {
+      if (!this.envelopeOpened) btnOpen.click();
     });
 
     btnNext.addEventListener('click', () => {
@@ -450,12 +460,14 @@ const App = {
       Haptics.tap();
 
       let progress = 0;
-      const scanInterval = setInterval(() => {
+      if (this.scanInterval) clearInterval(this.scanInterval);
+      this.scanInterval = setInterval(() => {
         progress += 8;
         barFill.style.width = Math.min(progress, 100) + '%';
         Sound.playScannerBeep();
         if (progress >= 100) {
-          clearInterval(scanInterval);
+          clearInterval(this.scanInterval);
+          this.scanInterval = null;
           scannerCard.classList.remove('scanning');
           statusText.textContent = 'Status: Pemindaian Selesai! ✅';
 
@@ -947,6 +959,11 @@ const App = {
       }, 700);
     });
 
+    // Also allow tapping directly on the gift box
+    giftBox?.addEventListener('click', () => {
+      if (!btnOpenGift.disabled) btnOpenGift.click();
+    });
+
     // Claim fake button -> Reveals joke & true gift button
     btnClaimFake.addEventListener('click', () => {
       Sound.playChime();
@@ -1047,6 +1064,8 @@ const App = {
 
         if (progress >= 1) {
           clearInterval(this.hugHoldTimer);
+          this.hugHoldTimer = null;
+          this.hugHolding = false;
           this.onHugComplete();
         }
       }, 40);
@@ -1202,15 +1221,45 @@ const App = {
      REPLAY ALL (RESET TO INITIAL STATE)
      =========================================================== */
   replayAll() {
-    document.querySelectorAll('.scene').forEach(s => { s.scrollTop = 0; });
+    // 1. Reset Scene 1
+    this.envelopeOpened = false;
+    const lid    = document.getElementById('env-lid');
+    const letter = document.getElementById('env-letter');
+    if (lid) {
+      lid.style.transition = '';
+      lid.style.transform = '';
+    }
+    if (letter) {
+      letter.style.transition = '';
+      letter.style.opacity = '0';
+      letter.style.transform = '';
+    }
+    const burst = document.getElementById('sparkle-burst');
+    if (burst) {
+      burst.classList.remove('show');
+      burst.innerHTML = '';
+    }
+    document.getElementById('opening-reveal')?.classList.remove('show');
+    document.getElementById('btn-open')?.classList.remove('hidden');
+    document.getElementById('btn-s1-next')?.classList.add('hidden');
+    document.getElementById('envelope-wrapper')?.classList.remove('opening');
 
-    // Reset Scene 2
+    // 2. Reset Scene 2
+    if (this.scanInterval) {
+      clearInterval(this.scanInterval);
+      this.scanInterval = null;
+    }
     document.getElementById('scanner-card')?.classList.remove('scanning');
-    document.getElementById('scanner-status').textContent = 'Status: Menunggu verifikasi';
-    document.getElementById('scanner-bar-fill').style.width = '0%';
+    const scannerStatus = document.getElementById('scanner-status');
+    if (scannerStatus) scannerStatus.textContent = 'Status: Menunggu verifikasi';
+    const barFill = document.getElementById('scanner-bar-fill');
+    if (barFill) barFill.style.width = '0%';
     document.getElementById('scanner-result')?.classList.add('hidden');
-    document.getElementById('btn-start-scan').disabled = false;
-    document.getElementById('btn-start-scan').style.opacity = '1';
+    const btnScan = document.getElementById('btn-start-scan');
+    if (btnScan) {
+      btnScan.disabled = false;
+      btnScan.style.opacity = '1';
+    }
     document.getElementById('check-question')?.classList.add('hidden');
     document.querySelectorAll('.answer-card').forEach(c => {
       c.classList.remove('correct', 'wrong');
@@ -1220,10 +1269,12 @@ const App = {
     document.getElementById('response-bubble')?.classList.add('hidden');
     document.getElementById('btn-s2-next')?.classList.add('hidden');
 
-    // Reset Scene 3 (Whack Game)
+    // 3. Reset Scene 3 (Whack Game)
     this.stopWhackGame();
     this.whackScore = 0;
     this.whackActiveHole = null;
+    this.whackDodged = false;
+    if (this.banterTimer) clearTimeout(this.banterTimer);
     const sScoreEl = document.getElementById('whack-score');
     const sComboEl = document.getElementById('whack-combo');
     if (sScoreEl) sScoreEl.textContent = '0';
@@ -1233,60 +1284,100 @@ const App = {
     document.getElementById('whack-banter')?.classList.add('hidden');
     for (let i = 0; i < 6; i++) {
       const a = document.getElementById(`mole-${i}`);
-      if (a) a.className = 'mole-actor';
+      if (a) {
+        a.className = 'mole-actor';
+        const sp = a.querySelector('.mole-emoji');
+        if (sp) sp.textContent = '⭐';
+      }
     }
 
-    // Reset Scene 4
+    // 4. Reset Scene 4
     document.querySelectorAll('.polaroid-card').forEach(c => c.classList.remove('flipped'));
     this.carouselIndex = 0;
     this.setCarousel(0);
 
-    // Reset Scene 5
+    // 5. Reset Scene 5
+    document.getElementById('gift-box')?.classList.remove('shaking');
     document.getElementById('gift-pre')?.classList.remove('hidden');
     document.getElementById('gift-zonk')?.classList.add('hidden');
     document.getElementById('gift-post')?.classList.add('hidden');
-    document.getElementById('btn-open-gift').disabled = false;
-    document.getElementById('btn-open-gift').style.opacity = '1';
+    const btnOpenGift = document.getElementById('btn-open-gift');
+    if (btnOpenGift) {
+      btnOpenGift.disabled = false;
+      btnOpenGift.style.opacity = '1';
+    }
     document.getElementById('btn-claim-fake')?.classList.remove('hidden');
     document.getElementById('zonk-notice')?.classList.add('hidden');
     document.getElementById('btn-open-real')?.classList.add('hidden');
 
-    // Reset Scene 6
+    // 6. Reset Scene 6
     this.typingDone = false;
-    if (this.typingTimer) clearTimeout(this.typingTimer);
+    if (this.typingTimer) {
+      clearTimeout(this.typingTimer);
+      this.typingTimer = null;
+    }
     const letterEl = document.getElementById('letter-text');
     if (letterEl) letterEl.textContent = '';
-    document.getElementById('letter-cursor').style.display = 'inline-block';
+    const letterCursor = document.getElementById('letter-cursor');
+    if (letterCursor) letterCursor.style.display = 'inline-block';
     document.getElementById('letter-closing')?.classList.add('hidden');
-    document.getElementById('btn-skip-typing').style.display = '';
+    const btnSkip = document.getElementById('btn-skip-typing');
+    if (btnSkip) btnSkip.style.display = '';
     document.getElementById('lantern-section')?.classList.add('hidden');
-    document.getElementById('btn-fly-lantern').disabled = false;
-    document.getElementById('btn-fly-lantern').style.opacity = '1';
-    document.getElementById('lantern-status')?.classList.add('hidden');
+    const btnFly = document.getElementById('btn-fly-lantern');
+    if (btnFly) {
+      btnFly.disabled = false;
+      btnFly.style.opacity = '1';
+    }
+    const wishInput = document.getElementById('wish-input');
+    if (wishInput) wishInput.value = '';
+    document.querySelectorAll('.wish-chip').forEach(c => c.classList.remove('selected'));
+    const lanternStatus = document.getElementById('lantern-status');
+    if (lanternStatus) {
+      lanternStatus.textContent = '';
+      lanternStatus.classList.add('hidden');
+    }
+    const lanternSky = document.getElementById('lantern-sky');
+    if (lanternSky) lanternSky.innerHTML = '';
+    const heartFloat = document.getElementById('heart-float');
+    if (heartFloat) heartFloat.innerHTML = '';
+
     document.getElementById('hug-section')?.classList.add('hidden');
+    this.hugHolding = false;
+    if (this.hugHoldTimer) {
+      clearInterval(this.hugHoldTimer);
+      this.hugHoldTimer = null;
+    }
+    this.hugProgress = 0;
     const hugBtn = document.getElementById('btn-hug-hold');
-    hugBtn.style.pointerEvents = '';
-    hugBtn.style.background = '';
-    document.getElementById('hug-btn-text').textContent = 'Tahan di sini';
-    document.getElementById('hug-ring-fill').style.strokeDashoffset = '276.46';
+    if (hugBtn) {
+      hugBtn.classList.remove('holding');
+      hugBtn.style.pointerEvents = '';
+      hugBtn.style.background = '';
+    }
+    const hugText = document.getElementById('hug-btn-text');
+    if (hugText) hugText.textContent = 'Tahan di sini';
+    const hugRing = document.getElementById('hug-ring-fill');
+    if (hugRing) hugRing.style.strokeDashoffset = '276.46';
+
     document.getElementById('final-words')?.classList.add('hidden');
     document.getElementById('btn-replay')?.classList.add('hidden');
 
-    // Reset Scene 1
-    const lid    = document.getElementById('env-lid');
-    const letter = document.getElementById('env-letter');
-    if (lid)    lid.style.transform = '';
-    if (letter) { letter.style.opacity = '0'; letter.style.transform = ''; }
-    document.getElementById('opening-reveal')?.classList.remove('show');
-    document.getElementById('btn-open')?.classList.remove('hidden');
-    document.getElementById('btn-s1-next')?.classList.add('hidden');
-    document.getElementById('envelope-wrapper')?.classList.remove('opening');
+    // 7. Scroll all scenes and windows to top
+    document.querySelectorAll('.scene').forEach(s => { s.scrollTop = 0; });
+    window.scrollTo(0, 0);
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
 
-    // Return to Scene 1
+    // 8. Return to Scene 1
     const scenes = document.querySelectorAll('.scene');
     scenes.forEach(s => s.classList.remove('active', 'exit-left', 'enter-right'));
     this.currentScene = 1;
-    document.getElementById('scene-1').classList.add('active');
+    const s1 = document.getElementById('scene-1');
+    if (s1) {
+      s1.classList.add('active');
+      s1.scrollTop = 0;
+    }
     this.updateProgress(1);
   },
 
