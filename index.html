@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#2D1B4E" />
+  <meta name="description" content="A Little Birthday Journey — sebuah hadiah digital interaktif yang penuh kejutan dan cerita." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title id="page-title">A Little Birthday Journey 🎂</title>
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <!-- ── Global Canvases & Overlays ─────────────────────── -->
+  <canvas id="confetti-canvas"></canvas>
+  <canvas id="fireworks-canvas"></canvas>
+  <div class="heart-float" id="heart-float" aria-hidden="true"></div>
+  <div class="lantern-sky" id="lantern-sky" aria-hidden="true"></div>
+
+  <!-- ── Floating Music Player ─────────────────────────── -->
+  <div id="music-player" class="hidden" aria-label="Music Controls">
+    <button id="music-btn" aria-label="Toggle music">🎵</button>
+    <span id="music-label">Music</span>
+  </div>
+
+  <!-- ── Progress Bar ─────────────────────────────────── -->
+  <nav id="progress-bar" aria-label="Journey progress">
+    <div class="progress-dot active" aria-hidden="true"></div>
+    <div class="progress-dot" aria-hidden="true"></div>
+    <div class="progress-dot" aria-hidden="true"></div>
+    <div class="progress-dot" aria-hidden="true"></div>
+    <div class="progress-dot" aria-hidden="true"></div>
+    <div class="progress-dot" aria-hidden="true"></div>
+  </nav>
+
+  <!-- ── App Root ──────────────────────────────────────── -->
+  <div id="app">
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 1 — A LITTLE SURPRISE (THE SECRET ENVELOPE)
+    ══════════════════════════════════════════════════════ -->
+    <section id="scene-1" class="scene active" aria-label="Scene 1: A Little Surprise">
+      <div class="star-field" id="star-field-1" aria-hidden="true"></div>
+
+      <div class="scene-content">
+        <!-- Envelope SVG -->
+        <div class="envelope-wrapper" id="envelope-wrapper" aria-hidden="true">
+          <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" width="200" height="150">
+            <!-- Envelope body -->
+            <rect x="5" y="30" width="190" height="115" rx="14" fill="#fff5f9" />
+            <rect x="5" y="30" width="190" height="115" rx="14" fill="none" stroke="#EFA6B5" stroke-width="2" />
+            <!-- Envelope bottom flap -->
+            <path d="M5 145 L5 55 L100 105 L195 55 L195 145 Z" fill="#FFF0F6" />
+            <path d="M5 55 L100 105 L195 55" fill="none" stroke="#EFA6B5" stroke-width="1.5" />
+            <!-- Envelope top flap (lid) -->
+            <path id="env-lid" d="M5 30 L100 90 L195 30 Z" fill="#F8C8DC" stroke="#EFA6B5" stroke-width="1.5" />
+            <!-- Letter inside (visible when open) -->
+            <g id="env-letter" opacity="0" transform="translate(50,0)">
+              <rect x="0" y="50" width="100" height="70" rx="8" fill="white" stroke="#CDB4DB" stroke-width="1" />
+              <line x1="12" y1="68" x2="88" y2="68" stroke="#CDB4DB" stroke-width="1.5" stroke-linecap="round" />
+              <line x1="12" y1="80" x2="88" y2="80" stroke="#CDB4DB" stroke-width="1.5" stroke-linecap="round" />
+              <line x1="12" y1="92" x2="70" y2="92" stroke="#CDB4DB" stroke-width="1.5" stroke-linecap="round" />
+              <text x="50" y="110" text-anchor="middle" font-size="14" fill="#EFA6B5">♡</text>
+            </g>
+            <!-- Ribbon -->
+            <line x1="100" y1="30" x2="100" y2="145" stroke="#EFA6B5" stroke-width="1.5" stroke-dasharray="4,4" />
+            <!-- Heart seal -->
+            <text x="100" y="72" text-anchor="middle" font-size="22" fill="#EFA6B5">♡</text>
+          </svg>
+          <div class="envelope-badge">TOP SECRET 🔒</div>
+          <div class="sparkle-burst" id="sparkle-burst" aria-hidden="true"></div>
+        </div>
+
+        <p class="scene-eyebrow text-white mb-8">✦ Dokumen Rahasia ✦</p>
+        <h1 class="scene-title text-white mb-8" id="s1-title">Hey, kamu!</h1>
+        <p class="scene-subtitle text-white" id="s1-subtitle"></p>
+
+        <!-- Post-open reveal -->
+        <div class="opening-reveal" id="opening-reveal">
+          <p class="scene-subtitle text-white mb-16" style="font-style:italic; font-size:14px;">
+            ✉️ &nbsp; Ada sebuah perjalanan kecil yang disiapkan khusus untukmu hari ini... &nbsp; ✉️
+          </p>
+        </div>
+
+        <button id="btn-open" class="btn-primary mt-12">
+          ✨ Buka dong!
+        </button>
+
+        <button id="btn-s1-next" class="btn-secondary mt-16 hidden">
+          Mulai Perjalanan &nbsp; →
+        </button>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 2 — BIRTHDAY CHECK & SILLY AGE SCANNER
+    ══════════════════════════════════════════════════════ -->
+    <section id="scene-2" class="scene" aria-label="Scene 2: Birthday Check">
+      <div class="star-field" id="star-field-2" aria-hidden="true"></div>
+
+      <div class="scene-content">
+        <p class="scene-eyebrow text-mid mb-8">🔍 Pemeriksaan Identitas</p>
+        <h2 class="scene-title text-deep mb-8">Sebentar, verifikasi dulu!</h2>
+        <p class="scene-subtitle text-mid mb-16">
+          Sistem kami perlu mendeteksi apakah kamu benar-benar orang yang sedang bertambah usia hari ini...
+        </p>
+
+        <!-- Silly Face Scanner Box -->
+        <div class="scanner-card mb-20" id="scanner-card">
+          <div class="scanner-target">
+            <div class="scanner-avatar" id="scanner-avatar">🎂</div>
+            <div class="scanner-laser" id="scanner-laser"></div>
+          </div>
+          <div class="scanner-info">
+            <p class="scanner-status" id="scanner-status">Status: Menunggu verifikasi</p>
+            <div class="scanner-bar"><div class="scanner-bar-fill" id="scanner-bar-fill"></div></div>
+          </div>
+          <button id="btn-start-scan" class="btn-scan">⚡ Pindai Wajah Sekarang</button>
+          <div class="scanner-result hidden" id="scanner-result"></div>
+        </div>
+
+        <!-- Question Section -->
+        <div id="check-question" class="hidden w-full">
+          <p class="scene-subtitle text-deep mb-12 font-bold">
+            Siapa yang hari ini sah <strong>bertambah usia</strong>? 🎂
+          </p>
+
+          <div class="answer-grid" id="answer-grid">
+            <button class="answer-card" data-answer="correct" aria-label="Pilihan: Aku dong">
+              🙋 Aku dong!
+            </button>
+            <button class="answer-card" data-answer="wrong-1" aria-label="Pilihan: Tetangga sebelah">
+              🏠 Tetangga sebelah.
+            </button>
+            <button class="answer-card" data-answer="wrong-2" aria-label="Pilihan: Kucing tetangga">
+              🐱 Kucing tetangga.
+            </button>
+          </div>
+
+          <div class="response-bubble hidden" id="response-bubble" aria-live="polite">
+            —
+          </div>
+
+          <button id="btn-s2-next" class="btn-primary mt-20 hidden">
+            Lanjut ke Misi Khusus! &nbsp; 🚀
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 3 — MINI GAME: WHACK-A-BINTANG USIL
+    ══════════════════════════════════════════════════════ -->
+    <section id="scene-3" class="scene" aria-label="Scene 3: Whack-a-Star Mini Game">
+      <div class="scene-content">
+        <p class="scene-eyebrow text-deep opacity-70">⭐ Mini Game Usil</p>
+        <h2 class="scene-title text-deep mb-8">Tangkap Bintang Usil! 😜</h2>
+        <p class="scene-subtitle text-mid mb-16" id="game-instruction">
+          Bintang-bintang ini suka ngejek dan kabur! Ketuk mereka cepat-cepat sebelum sembunyi lagi. Awas zonk!
+        </p>
+
+        <!-- Game Dashboard -->
+        <div class="game-dashboard mb-16">
+          <div class="dash-pill">
+            <span class="dash-label">Tertangkap:</span>
+            <span class="dash-val" id="whack-score">0</span> / <span id="whack-target">7</span> ⭐
+          </div>
+          <div class="dash-pill">
+            <span class="dash-label">Status:</span>
+            <span class="dash-val" id="whack-combo">Siap main! 🔥</span>
+          </div>
+        </div>
+
+        <!-- Floating Banter Bubble -->
+        <div class="whack-banter hidden" id="whack-banter">Eits, gak kena! 😜</div>
+
+        <!-- 6 Cloud Holes Arena -->
+        <div class="whack-arena" id="whack-arena">
+          <div class="whack-hole" data-hole="0">
+            <div class="mole-actor" id="mole-0">
+              <span class="mole-emoji">⭐</span>
+            </div>
+            <div class="hole-cloud">☁️</div>
+          </div>
+          <div class="whack-hole" data-hole="1">
+            <div class="mole-actor" id="mole-1">
+              <span class="mole-emoji">⭐</span>
+            </div>
+            <div class="hole-cloud">☁️</div>
+          </div>
+          <div class="whack-hole" data-hole="2">
+            <div class="mole-actor" id="mole-2">
+              <span class="mole-emoji">⭐</span>
+            </div>
+            <div class="hole-cloud">☁️</div>
+          </div>
+          <div class="whack-hole" data-hole="3">
+            <div class="mole-actor" id="mole-3">
+              <span class="mole-emoji">⭐</span>
+            </div>
+            <div class="hole-cloud">☁️</div>
+          </div>
+          <div class="whack-hole" data-hole="4">
+            <div class="mole-actor" id="mole-4">
+              <span class="mole-emoji">⭐</span>
+            </div>
+            <div class="hole-cloud">☁️</div>
+          </div>
+          <div class="whack-hole" data-hole="5">
+            <div class="mole-actor" id="mole-5">
+              <span class="mole-emoji">⭐</span>
+            </div>
+            <div class="hole-cloud">☁️</div>
+          </div>
+        </div>
+
+        <!-- Start Game Button -->
+        <button id="btn-start-whack" class="btn-scan mt-16">
+          🎮 Mulai Tangkap Bintang!
+        </button>
+
+        <!-- Success Message (hidden until target reached) -->
+        <div id="whack-success" class="success-message mt-20 hidden">
+          <p class="scene-title text-deep mb-8">Yay! Kamu Berhasil! 🏆</p>
+          <p class="scene-subtitle text-mid" style="font-size:14px;">
+            Semua bintang usil berhasil kamu taklukkan! Sekarang kado spesialmu siap dibuka... ✨
+          </p>
+          <button id="btn-s3-next" class="btn-primary mt-16">
+            🎁 Lanjut Ambil Hadiahmu
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 4 — A LITTLE MEMORY (3D FLIP POLAROID)
+    ══════════════════════════════════════════════════════ -->
+    <section id="scene-4" class="scene" aria-label="Scene 4: A Little Memory">
+      <div class="scene-content">
+        <p class="scene-eyebrow text-mid mb-8">📸 Galeri Kenangan</p>
+        <h2 class="scene-title text-deep mb-8">Some Little Moments...</h2>
+        <p class="scene-subtitle text-mid mb-16" style="font-size:13px;">
+          Geser foto kenangan, dan <strong>tap kartu</strong> untuk membaca pesan rahasia di baliknya! 💌
+        </p>
+
+        <!-- 3D Flip Polaroid Carousel -->
+        <div class="carousel-wrapper">
+          <div class="carousel-track-container" id="carousel-container">
+            <div class="carousel-track" id="carousel-track">
+              <!-- Injected by script.js with 3D flip card structure -->
+            </div>
+          </div>
+
+          <!-- Controls & Dots -->
+          <div class="carousel-controls mt-16">
+            <button class="carousel-btn" id="carousel-prev" aria-label="Foto sebelumnya">‹</button>
+            <div class="carousel-dots" id="carousel-dots" role="tablist"></div>
+            <button class="carousel-btn" id="carousel-next" aria-label="Foto berikutnya">›</button>
+          </div>
+
+          <!-- Reaction Emoji Bar -->
+          <div class="polaroid-reactions mt-12">
+            <span class="react-label">Kirim reaksi:</span>
+            <button class="btn-react" data-emoji="❤️" aria-label="Reaksi Hati">❤️</button>
+            <button class="btn-react" data-emoji="🌸" aria-label="Reaksi Bunga">🌸</button>
+            <button class="btn-react" data-emoji="✨" aria-label="Reaksi Berkilau">✨</button>
+            <button class="btn-react" data-emoji="🥺" aria-label="Reaksi Terharu">🥺</button>
+          </div>
+        </div>
+
+        <button id="btn-s4-next" class="btn-primary mt-20">
+          🎁 Masih ada satu kejutan lagi...
+        </button>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 5 — THE PRANK ZONK & THE REAL GIFT REVEAL
+    ══════════════════════════════════════════════════════ -->
+    <section id="scene-5" class="scene" aria-label="Scene 5: The Gift Reveal">
+      <div class="star-field" id="star-field-5" aria-hidden="true"></div>
+
+      <!-- State 1: Gift box waiting to be tapped -->
+      <div class="scene-content" id="gift-pre">
+        <p class="scene-eyebrow text-mid mb-8">🎁 Hadiah Spesial</p>
+        <h2 class="scene-title text-deep mb-8">Well, well...</h2>
+        <p class="scene-subtitle text-mid mb-20">
+          Sepertinya ada <strong>satu kado khusus</strong> yang sudah disiapkan buat kamu. Buka sekarang! ✨
+        </p>
+
+        <div class="gift-wrapper">
+          <div class="gift-box" id="gift-box" role="button" aria-label="Buka Kado">
+            <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" width="200" height="220">
+              <rect x="20" y="90" width="160" height="120" rx="10" fill="#FFF0F6" />
+              <rect x="20" y="90" width="160" height="120" rx="10" fill="none" stroke="#EFA6B5" stroke-width="2.5" />
+              <line x1="100" y1="90" x2="100" y2="210" stroke="#F8C8DC" stroke-width="8" />
+              <rect id="gift-lid-svg" x="10" y="72" width="180" height="32" rx="8" fill="#EFA6B5" stroke="#D4849A" stroke-width="2" />
+              <rect x="91" y="72" width="18" height="32" fill="rgba(255,255,255,0.3)" />
+              <rect x="91" y="20" width="18" height="72" fill="#CDB4DB" />
+              <ellipse cx="70" cy="42" rx="28" ry="16" fill="#CDB4DB" transform="rotate(-30, 70, 42)" />
+              <ellipse cx="130" cy="42" rx="28" ry="16" fill="#CDB4DB" transform="rotate(30, 130, 42)" />
+              <circle cx="100" cy="42" r="14" fill="#EFA6B5" />
+              <circle cx="100" cy="42" r="8" fill="#F8C8DC" />
+              <text x="100" y="165" text-anchor="middle" font-size="36" fill="#F8C8DC">★</text>
+            </svg>
+          </div>
+        </div>
+
+        <button id="btn-open-gift" class="btn-primary mt-12">
+          🎀 Buka Hadiahnya!
+        </button>
+      </div>
+
+      <!-- State 2: Funny Zonk Prank Card -->
+      <div class="scene-content hidden" id="gift-zonk">
+        <div class="zonk-card" id="zonk-card">
+          <div class="zonk-badge" id="zonk-badge">🎉 SELAMAT! KAMU MENANG:</div>
+          <h3 class="zonk-title" id="zonk-title">Voucher Gratis Overthinking 1 Tahun! 🧠</h3>
+          <p class="zonk-subtitle" id="zonk-subtitle">Berlaku setiap jam 2 pagi sambil mikirin hal random.</p>
+          <div class="zonk-barcode">||||| | |||| ||| ||||| || |</div>
+          <button id="btn-claim-fake" class="btn-secondary mt-12">Klaim Voucher 🛌</button>
+          <p class="zonk-notice hidden" id="zonk-notice"></p>
+          <button id="btn-open-real" class="btn-primary mt-16 hidden">
+            🎀 Buka Kado yang Aslinya! ✨
+          </button>
+        </div>
+      </div>
+
+      <!-- State 3: Real Grand Reveal with Interactive Fireworks -->
+      <div class="scene-content hidden" id="gift-post">
+        <div class="hbd-reveal">
+          <p class="hbd-text">HAPPY BIRTHDAY!</p>
+          <p class="scene-subtitle text-deep font-bold" style="font-size:18px; margin-bottom:4px;">
+            🎊 Today is all about you! 🎊
+          </p>
+          <p class="scene-subtitle text-mid" style="font-size:14px; margin-bottom:8px;">
+            Hari ini, kamu adalah bintang paling terang. ✨
+          </p>
+          <p class="fireworks-hint">🎆 <em>Ketuk layar di mana saja untuk meledakkan kembang api!</em></p>
+        </div>
+        <button id="btn-s5-next" class="btn-primary mt-20">
+          💌 Ada pesan terakhir buat kamu...
+        </button>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 6 — THE HEARTFELT ENDING (LANTERN & HUG)
+    ══════════════════════════════════════════════════════ -->
+    <section id="scene-6" class="scene" aria-label="Scene 6: The Heartfelt Ending">
+      <div class="night-stars" id="night-stars" aria-hidden="true"></div>
+
+      <div class="scene-content" style="max-width:460px; padding-bottom:40px;">
+        <p class="scene-eyebrow mt-8 mb-8" style="color:rgba(255,255,255,0.65);">✉️ Sebuah Surat Kecil</p>
+        <h2 class="scene-title mb-4" style="color:var(--white);">Before You Go...</h2>
+        <p style="font-family:var(--font-letter); font-size:14px; font-style:italic; color:rgba(255,255,255,0.7); margin-bottom:20px;">
+          There's something I want you to know.
+        </p>
+
+        <!-- Letter container -->
+        <div class="letter-container">
+          <div class="letter-divider"></div>
+          <div id="letter-text" aria-live="polite" aria-label="Birthday letter"></div>
+          <div id="letter-cursor" class="letter-cursor"></div>
+
+          <!-- Closing (hidden until letter done) -->
+          <div class="letter-closing hidden" id="letter-closing">
+            <p class="closing-with-love" id="closing-with-love"></p>
+            <p class="closing-name" id="closing-name"></p>
+          </div>
+        </div>
+
+        <!-- Skip button -->
+        <button class="skip-typing-btn" id="btn-skip-typing">
+          Baca sampai selesai ⏩
+        </button>
+
+        <!-- 🏮 Feature 1: Make a Wish & Sky Lantern (hidden until letter done) -->
+        <div class="lantern-box mt-24 hidden" id="lantern-section">
+          <div class="lantern-icon">🏮</div>
+          <h4 class="lantern-title">Terbangkan Lentera Harapan</h4>
+          <p class="lantern-desc">Tulis satu harapan atau pilih doa baik untuk kamu terbangkan ke langit malam:</p>
+
+          <div class="wish-chips" id="wish-chips">
+            <!-- Chips injected by script -->
+          </div>
+
+          <div class="wish-input-wrap">
+            <input type="text" id="wish-input" class="wish-input" placeholder="Tulis harapanmu di sini..." maxlength="80" />
+            <button id="btn-fly-lantern" class="btn-lantern">✨ Terbangkan</button>
+          </div>
+          <p class="lantern-status hidden" id="lantern-status"></p>
+        </div>
+
+        <!-- 🤗 Feature 2: Long-Press Virtual Hug (hidden until lantern flown) -->
+        <div class="hug-section mt-24 hidden" id="hug-section">
+          <p class="hug-instruction">Tahan tombol di bawah ini selama <strong>3 detik</strong> untuk menerima pelukan hangat...</p>
+          <div class="hug-button-wrap">
+            <button id="btn-hug-hold" class="btn-hug-hold" aria-label="Tahan untuk pelukan virtual">
+              <svg class="hug-ring-svg" viewBox="0 0 100 100">
+                <circle class="hug-ring-bg" cx="50" cy="50" r="44"></circle>
+                <circle class="hug-ring-fill" id="hug-ring-fill" cx="50" cy="50" r="44"></circle>
+              </svg>
+              <span class="hug-btn-content">
+                <span class="hug-icon">🤗</span>
+                <span class="hug-text" id="hug-btn-text">Tahan di sini</span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Final heartfelt words (hidden until hug completed) -->
+        <div id="final-words" class="final-words mt-24 hidden">
+          <p>"That's the end of our little journey."</p>
+          <p class="mt-8">"But I hope your happiness doesn't end here." 🌸</p>
+          <p class="mt-8 final-sub">The world is truly a little better with you in it.</p>
+        </div>
+
+        <!-- Replay button -->
+        <button id="btn-replay" class="btn-secondary mt-24 hidden">
+          🔄 Ulangi Perjalanan
+        </button>
+      </div>
+    </section>
+
+  </div><!-- /#app -->
+
+  <!-- Hidden audio element for background music -->
+  <audio id="bgm" loop preload="none" aria-hidden="true"></audio>
+
+  <!-- Scripts: Relative paths for 100% GitHub Pages & Vercel compatibility -->
+  <script src="./config.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>
