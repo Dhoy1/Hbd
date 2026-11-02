@@ -545,19 +545,29 @@ const App = {
       this.startWhackGame();
     });
 
-    // Touch / click on holes
+    // Touch / click on holes with strict event deduplication
     holes.forEach(hole => {
       const holeIdx = parseInt(hole.dataset.hole, 10);
+      let handledByPointer = false;
+
       const onHit = (e) => {
         if (!this.whackPlaying) return;
         if (this.whackActiveHole === holeIdx) {
-          e.preventDefault();
+          if (e.cancelable) e.preventDefault();
           this.handleWhackHit(holeIdx);
         }
       };
 
-      hole.addEventListener('pointerdown', onHit);
-      hole.addEventListener('click', onHit);
+      hole.addEventListener('pointerdown', (e) => {
+        handledByPointer = true;
+        onHit(e);
+        setTimeout(() => { handledByPointer = false; }, 300);
+      });
+
+      hole.addEventListener('click', (e) => {
+        if (handledByPointer) return;
+        onHit(e);
+      });
     });
 
     btnNext.addEventListener('click', () => {
@@ -610,23 +620,27 @@ const App = {
       newHole = (newHole + 1) % 6;
     }
 
-    // Decide character type
+    // Character distribution:
+    // 65% normal star ⭐ (+1 point, counted 1 per 1)
+    // 15% cheeky dodge star ⭐ (turns into 😜 when tapped, 0 points)
+    // 10% fake emote 😜 (pops up as emote, tapping gives 0 points)
+    // 10% zonk overthinking 🧠 (-1 point)
     const rand = Math.random();
     let type = 'star';
     let emoji = '⭐';
 
-    if (rand < 0.50) {
+    if (rand < 0.65) {
       type = 'star';
       emoji = '⭐';
-    } else if (rand < 0.78) {
-      type = 'cheeky';
-      emoji = '😜';
-    } else if (rand < 0.92) {
-      type = 'zonk';
-      emoji = '🧠';
+    } else if (rand < 0.80) {
+      type = 'dodge_star';
+      emoji = '⭐'; // looks like a star, but dodges!
+    } else if (rand < 0.90) {
+      type = 'fake_emote';
+      emoji = '😜'; // funny fake emote, does NOT count as a star!
     } else {
-      type = 'cat';
-      emoji = '🐱';
+      type = 'zonk';
+      emoji = '🧠'; // overthinking zonk (-1 point)
     }
 
     this.whackActiveHole = newHole;
@@ -642,14 +656,14 @@ const App = {
 
     Sound.playScannerBeep();
 
-    const stayDuration = type === 'cat' ? 1000 : (type === 'cheeky' ? 1200 : 1300);
+    const stayDuration = (type === 'zonk' || type === 'fake_emote') ? 1300 : 1200;
 
     this.whackPopDownTimer = setTimeout(() => {
       if (this.whackPlaying && this.whackActiveHole === newHole) {
         const a = document.getElementById(`mole-${newHole}`);
         if (a) a.className = 'mole-actor';
         this.whackActiveHole = null;
-        this.whackScheduleNext(350 + Math.random() * 300);
+        this.whackScheduleNext(300 + Math.random() * 250);
       }
     }, stayDuration);
   },
@@ -657,14 +671,20 @@ const App = {
   handleWhackHit(holeIdx) {
     if (!this.whackPlaying || this.whackActiveHole !== holeIdx) return;
 
+    // CRITICAL: Immediately invalidate active hole so no secondary event or fast double-tap can hit again!
+    this.whackActiveHole = null;
     clearTimeout(this.whackPopDownTimer);
+
     const actor = document.getElementById(`mole-${holeIdx}`);
     const type  = this.whackActiveType;
 
-    // Cheeky Star dodge mechanic
-    if (type === 'cheeky' && !this.whackDodged && Math.random() < 0.6) {
-      this.whackDodged = true;
-      if (actor) actor.classList.add('dodging');
+    // CASE 1: Dodge Star (Kabur saat mau disentuh, 0 poin)
+    if (type === 'dodge_star') {
+      if (actor) {
+        actor.classList.add('dodging');
+        const sp = actor.querySelector('.mole-emoji');
+        if (sp) sp.textContent = '😜';
+      }
       Sound.playBoing();
       Haptics.error();
 
@@ -674,48 +694,56 @@ const App = {
 
       setTimeout(() => {
         if (actor) actor.className = 'mole-actor';
-        this.whackActiveHole = null;
-        this.whackScheduleNext(250);
+        this.whackScheduleNext(300);
       }, 400);
       return;
     }
 
-    // Successful hit!
-    if (actor) actor.classList.add('hit');
+    // CASE 2: Fake Emote Usil (😜 bukan bintang, tidak terhitung!)
+    if (type === 'fake_emote') {
+      if (actor) actor.classList.add('dodging');
+      Sound.playBoing();
+      Haptics.error();
+      const fakeMsg = CONFIG.whackGame?.fakeEmoteLine || 'Eits, itu cuma emote usil, bukan bintang! 😜 (0)';
+      this.showBanter(fakeMsg);
 
+      setTimeout(() => {
+        if (actor) actor.className = 'mole-actor';
+        this.whackScheduleNext(300);
+      }, 400);
+      return;
+    }
+
+    // CASE 3: Zonk Overthinking (🧠 kurangi 1 poin, min 0)
     if (type === 'zonk') {
+      if (actor) actor.classList.add('hit');
       this.whackScore = Math.max(0, this.whackScore - 1);
       Sound.playBoing();
       Haptics.error();
-      this.showBanter(CONFIG.whackGame?.zonkLine || 'Aduh overthinking berlebih! 🧠 (-1)');
-    } else if (type === 'cat') {
-      this.whackScore += 2;
-      Sound.playApplause();
-      Haptics.success();
-      this.showBanter(CONFIG.whackGame?.catBonusLine || 'Meoow! Bonus Kucing Ultah! 🐱 (+2)');
-      this.showSparkles(document.getElementById('sparkle-burst'));
-    } else {
-      this.whackScore += 1;
-      Sound.playChime();
-      Haptics.success();
-      this.showBanter(type === 'cheeky' ? 'Aduh ampun ketangkap! 😭 ⭐ (+1)' : 'Dapet 1 Bintang! ⭐ (+1)');
+      this.showBanter(CONFIG.whackGame?.zonkLine || 'Aduh, kena overthinking berlebih! 🧠 (-1)');
+
+      const scoreEl = document.getElementById('whack-score');
+      if (scoreEl) scoreEl.textContent = this.whackScore;
+      this.updateWhackCombo();
+
+      setTimeout(() => {
+        if (actor) actor.className = 'mole-actor';
+        this.whackScheduleNext(350);
+      }, 350);
+      return;
     }
+
+    // CASE 4: Bintang Asli ⭐ (HANYA INI YANG TERHITUNG, TEPAT +1 POIN 1 PER 1!)
+    if (actor) actor.classList.add('hit');
+    this.whackScore += 1;
+    Sound.playChime();
+    Haptics.success();
+    this.showBanter('Dapet 1 Bintang! ⭐ (+1)');
+    this.showSparkles(document.getElementById('sparkle-burst'));
 
     const scoreEl = document.getElementById('whack-score');
     if (scoreEl) scoreEl.textContent = this.whackScore;
-
-    const comboEl = document.getElementById('whack-combo');
-    if (comboEl) {
-      if (this.whackScore >= this.whackTarget) {
-        comboEl.textContent = 'SELESAI! 🏆';
-      } else if (this.whackScore >= 5) {
-        comboEl.textContent = 'Sedikit lagi! ⚡';
-      } else if (this.whackScore >= 3) {
-        comboEl.textContent = 'Mantap! 🔥';
-      } else {
-        comboEl.textContent = 'Lanjut! 🏃';
-      }
-    }
+    this.updateWhackCombo();
 
     // Check Win Condition
     if (this.whackScore >= this.whackTarget) {
@@ -724,9 +752,22 @@ const App = {
     } else {
       setTimeout(() => {
         if (actor) actor.className = 'mole-actor';
-        this.whackActiveHole = null;
         this.whackScheduleNext(300);
-      }, 300);
+      }, 350);
+    }
+  },
+
+  updateWhackCombo() {
+    const comboEl = document.getElementById('whack-combo');
+    if (!comboEl) return;
+    if (this.whackScore >= this.whackTarget) {
+      comboEl.textContent = 'SELESAI! 🏆';
+    } else if (this.whackScore >= 5) {
+      comboEl.textContent = 'Sedikit lagi! ⚡';
+    } else if (this.whackScore >= 3) {
+      comboEl.textContent = 'Mantap! 🔥';
+    } else {
+      comboEl.textContent = 'Lanjut! 🏃';
     }
   },
 

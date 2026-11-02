@@ -18,7 +18,8 @@ Penerima akan diajak melalui perjalanan kecil yang dimulai dari rasa penasaran, 
    - Arena mini game 6 lubang awan interaktif ala Whack-a-Mole.
    - Bintang-bintang usil bermunculan dan suka mengejek (*"Eits, gak kena! 😜"*, *"Kurang cepet! 🏃"*).
    - Mekanisme dodge/menghindar yang seru dan menantang.
-   - Ada item zonk (*"Aduh kena overthinking berlebih! 🧠 (-1)"*) dan karakter bonus kucing (*"Meoow! Bonus Kucing Ultah! 🐱 (+2)"*).
+   - Ada item zonk (*"Aduh kena overthinking berlebih! 🧠 (-1)"*) dan emote usil (*"Eits, itu cuma emote usil, bukan bintang! 😜 (0)"*).
+   - Menghitung bintang strictly 1 per 1 hingga mencapai target 7 poin.
    - Animasi selebrasi konfeti dan parade bintang menari saat mencapai target 7 poin.
 4. **Scene 4 — Galeri Polaroid 3D Flip & Pesan Rahasia**:
    - Foto bergaya polaroid vintage yang bisa **di-tap untuk membalik kartu (3D Flip)**!
@@ -112,9 +113,10 @@ const CONFIG = {
       "Haha meleset! 🙈",
       "Wleee~ 😝"
     ],
-    zonkLine     : "Aduh, kena overthinking berlebih! 🧠 (-1)",
-    catBonusLine : "Meoow! Bonus Kucing Ultah! 🐱 (+2)"
+    fakeEmoteLine: "Eits, itu cuma emote usil, bukan bintang! 😜 (0)",
+    zonkLine     : "Aduh, kena overthinking berlebih! 🧠 (-1)"
   },
+  zonkPrize: {
     badge   : "🎉 SELAMAT! KAMU MENANG:",
     title   : "Voucher Gratis Overthinking 1 Tahun! 🧠",
     subtitle: "Berlaku setiap jam 2 pagi sambil mikirin hal random.",

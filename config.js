@@ -32,11 +32,11 @@ const CONFIG = {
       "Eits, gak kena! 😜",
       "Terlalu lambat wlee! 🏃💨",
       "Sini tangkap kalau bisa! ✨",
-      "Aduh ampun ketangkap! 😭",
-      "Jago amat jempolnya! 👏"
+      "Haha meleset! 🙈",
+      "Wleee~ 😝"
     ],
-    zonkLine: "Aduh, kena overthinking berlebih! 🧠 (-1)",
-    catBonusLine: "Meoow! Bonus Kucing Ultah! 🐱 (+2)"
+    fakeEmoteLine: "Eits, itu cuma emote usil, bukan bintang! 😜 (0)",
+    zonkLine: "Aduh, kena overthinking berlebih! 🧠 (-1)"
   },
 
   // ── Scene 4 — Foto Kenangan (Polaroid 3D Flip) ─────────────
