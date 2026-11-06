@@ -54,7 +54,7 @@ const CONFIG = {
 
   // Caption depan foto polaroid
   memoryCaptions: [
-    "One little moment, one beautiful memory. ✨",
+    "One little moment, one beautiful memory. 🥰",
     "Terima kasih sudah menjadi bagian dari cerita ini. 🌸",
     "Semoga selalu ada alasan untuk tersenyum. 💫"
   ],
