@@ -1044,6 +1044,11 @@ button {
    ============================================================ */
 #scene-4 {
   background: linear-gradient(160deg, #FFF1E6 0%, #F8C8DC 50%, #EFA6B5 100%);
+  padding-top: calc(env(safe-area-inset-top, 0px) + 80px);
+}
+
+#scene-4::before {
+  display: none;
 }
 
 .carousel-wrapper {
@@ -1387,6 +1392,7 @@ button {
   background: radial-gradient(circle at 50% 25%, #231238 0%, #150926 50%, #090314 100%);
   position: relative;
   overflow-x: hidden;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 80px);
 }
 
 #scene-6::before {
@@ -1396,7 +1402,7 @@ button {
 /* Ambient Candlelight / Aura Glow behind the letter */
 .scene6-aura-glow {
   position: absolute;
-  top: 100px;
+  top: 130px;
   left: 50%;
   transform: translateX(-50%);
   width: min(90vw, 380px);
