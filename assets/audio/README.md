@@ -1,52 +1,42 @@
 # 🎵 Folder Audio — A Little Birthday Journey
 
-Letakkan file musik latar belakang di folder ini.
+Website ini mendukung **dua musik latar berbeda** dengan transisi otomatis (*crossfade*):
+1. **Lagu Perjalanan (Scene 1 – 5)**: Suasana ceria, manis, dan playful.
+2. **Lagu Ending (Scene 6)**: Suasana emosional, romantis, dan menyentuh hati saat membaca surat.
 
-## Cara Menambahkan Musik
+---
 
-1. Siapkan file audio dalam format **MP3**.
-2. Beri nama file: **`bgm.mp3`**
-3. Letakkan file di folder ini: `assets/audio/bgm.mp3`
-4. Buka kembali website — musik akan otomatis tersedia.
+## 📁 File yang Perlu Disiapkan
 
-## Rekomendasi Musik
+Siapkan 2 file audio berformat **`.mp3`** dan letakkan langsung di dalam folder ini (`assets/audio/`):
 
-Gunakan musik bebas royalti (royalty-free) dari sumber berikut:
-
-| Sumber | URL | Keterangan |
+| Nama File | Digunakan Pada | Karakter Suasana |
 |---|---|---|
-| Pixabay Music | https://pixabay.com/music/ | Gratis, bebas royalti |
-| Free Music Archive | https://freemusicarchive.org | Filter: CC0 atau CC BY |
-| Incompetech | https://incompetech.com | Karya Kevin MacLeod, CC BY |
-| Bensound | https://www.bensound.com | Sebagian gratis dengan atribusi |
-| Chosic | https://www.chosic.com | Koleksi bebas royalti |
+| **`bgm-journey.mp3`** | Scene 1 s/d Scene 5 | Akustik manis, cute, cheerful, ukelele/lo-fi romantis |
+| **`bgm-ending.mp3`** | Scene 6 (Surat & Ending) | Piano lembut, slow, haru, emosional, hangat |
 
-## Karakter Musik yang Cocok
+> [!TIP]
+> Jika Anda hanya punya 1 lagu saja, cukup beri nama `bgm-journey.mp3` dan lagu tersebut akan otomatis dipakai di seluruh halaman.
 
-Cari musik dengan kata kunci berikut:
+---
 
-- `soft piano instrumental`
-- `birthday emotional piano`
-- `romantic piano slow`
-- `nostalgic music box`
-- `gentle birthday melody`
-- `dreamy piano ambient`
+## 🎧 Rekomendasi Tempat Unduh Lagu Bebas Royalti (Gratis)
 
-## Format yang Didukung
+| Sumber | Link | Kata Kunci Pencarian |
+|---|---|---|
+| **Pixabay Music** | [pixabay.com/music](https://pixabay.com/music/) | `romantic piano`, `cute acoustic`, `birthday melody` |
+| **Free Music Archive** | [freemusicarchive.org](https://freemusicarchive.org) | Filter: CC0 / Instrumental |
+| **Chosic** | [chosic.com](https://chosic.com) | `soft emotional piano`, `happy background` |
 
-| Format | Kompatibilitas |
-|---|---|
-| `.mp3` | ✅ Sangat direkomendasikan |
-| `.ogg` | ✅ Didukung (ubah path di config.js) |
-| `.wav` | ⚠️ Ukuran besar, kurang ideal |
-| `.m4a` | ⚠️ Tidak semua browser mendukung |
+---
 
-## Mengubah Path Musik
+## ⚙️ Mengubah Nama File di `config.js`
 
-Jika ingin menggunakan nama file berbeda, ubah di **`config.js`**:
+Jika nama file Anda berbeda (misal: `lagu-kita.mp3` dan `lagu-haru.mp3`), buka file [config.js](file:///c:/laragon/www/HBD/config.js) lalu ubah:
 
-```js
-musicPath: "./assets/audio/nama-file-kamu.mp3",
+```javascript
+musicPath: "./assets/audio/lagu-kita.mp3",
+endingMusicPath: "./assets/audio/lagu-haru.mp3",
 ```
 
 ## Catatan Penting

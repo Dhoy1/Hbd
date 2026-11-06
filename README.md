@@ -76,6 +76,14 @@ const CONFIG = {
 
   openingMessage: "Kayaknya ada sesuatu yang spesial buat kamu hari ini...",
 
+  // Surat mini pembuka dalam amplop
+  envelopeLetter: {
+    badge  : "💌 DOKUMEN RAHASIA",
+    title  : "Happy Birthday, Cantik! 🎂✨",
+    content: "Hari ini adalah harinya kamu. Gak boleh cemberut, dilarang overthinking, dan wajib bahagia seharian penuh! Ada sebuah perjalanan kecil penuh kejutan yang udah disiapin spesial buat kamu. Siap melihatnya? 🌸",
+    footer : "— Jangan lupa senyum dulu sebelum mulai ya~ ♡"
+  },
+
   // Hasil scanner wajah konyol
   scannerResults: [
     "Mendeteksi kadar keimutan: 99.8% (Kelebihan dosis) 🥰",

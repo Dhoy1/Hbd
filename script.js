@@ -178,6 +178,7 @@ const Haptics = {
     }
   },
   tap()       { this.vibrate(30); },
+  medium()    { this.vibrate(60); },
   error()     { this.vibrate([40, 50, 40]); },
   success()   { this.vibrate([50, 70, 90]); },
   heartbeat() { this.vibrate([70, 100, 70]); },
@@ -237,6 +238,19 @@ const App = {
     document.title = CONFIG.pageTitle || 'A Little Birthday Journey 🎂';
     const s1sub = document.getElementById('s1-subtitle');
     if (s1sub) s1sub.textContent = CONFIG.openingMessage || '';
+
+    // Scene 1 Mini Letter Card
+    if (CONFIG.envelopeLetter) {
+      const cardBadge  = document.getElementById('s1-card-badge');
+      const cardTitle  = document.getElementById('s1-card-title');
+      const cardBody   = document.getElementById('s1-card-body');
+      const cardFooter = document.getElementById('s1-card-footer');
+
+      if (cardBadge  && CONFIG.envelopeLetter.badge)   cardBadge.textContent  = CONFIG.envelopeLetter.badge;
+      if (cardTitle  && CONFIG.envelopeLetter.title)   cardTitle.textContent  = CONFIG.envelopeLetter.title;
+      if (cardBody   && CONFIG.envelopeLetter.content) cardBody.textContent   = CONFIG.envelopeLetter.content;
+      if (cardFooter && CONFIG.envelopeLetter.footer)  cardFooter.textContent = CONFIG.envelopeLetter.footer;
+    }
 
     const closingWithLove = document.getElementById('closing-with-love');
     const closingName     = document.getElementById('closing-name');
@@ -299,7 +313,12 @@ const App = {
       this.currentScene = num;
       this.updateProgress(num);
 
-      if (num === 6) this.startTypingLetter();
+      if (num === 6) {
+        this.startTypingLetter();
+        if (CONFIG.endingMusicPath) {
+          this.switchMusic(CONFIG.endingMusicPath);
+        }
+      }
     }, 550);
   },
 
@@ -339,18 +358,36 @@ const App = {
     const container = document.getElementById('night-stars');
     if (!container) return;
     container.innerHTML = '';
-    for (let i = 0; i < 55; i++) {
+
+    // 1. Twinkling stars in the deep night sky
+    for (let i = 0; i < 60; i++) {
       const star = document.createElement('div');
       star.classList.add('night-star');
-      const size = Math.random() * 3 + 1;
+      const size = Math.random() * 2.8 + 1;
       star.style.cssText = `
         width:${size}px; height:${size}px;
-        top:${Math.random() * 85}%;
+        top:${Math.random() * 90}%;
         left:${Math.random() * 100}%;
-        --dur:${Math.random() * 4 + 2}s;
+        --dur:${Math.random() * 4 + 2.5}s;
         --delay:-${Math.random() * 5}s;
       `;
       container.appendChild(star);
+    }
+
+    // 2. Romantic golden stardust / fireflies drifting upward softly
+    for (let j = 0; j < 22; j++) {
+      const dust = document.createElement('div');
+      dust.classList.add('stardust-particle');
+      const size = Math.random() * 3 + 2;
+      const drift = (Math.random() - 0.5) * 60;
+      dust.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random() * 100}%;
+        --dur:${Math.random() * 6 + 9}s;
+        --delay:-${Math.random() * 10}s;
+        --drift:${drift}px;
+      `;
+      container.appendChild(dust);
     }
   },
 
@@ -358,14 +395,19 @@ const App = {
      SCENE 1 — THE SECRET ENVELOPE
      =========================================================== */
   initScene1() {
-    const btnOpen  = document.getElementById('btn-open');
-    const btnNext  = document.getElementById('btn-s1-next');
-    const envelope = document.getElementById('envelope-wrapper');
-    const burst    = document.getElementById('sparkle-burst');
-    const reveal   = document.getElementById('opening-reveal');
-    const lid      = document.getElementById('env-lid');
-    const letter   = document.getElementById('env-letter');
+    const btnOpen   = document.getElementById('btn-open');
+    const btnNext   = document.getElementById('btn-s1-next');
+    const envelope  = document.getElementById('envelope-wrapper');
+    const burst     = document.getElementById('sparkle-burst');
+    const lid       = document.getElementById('env-lid');
+    const letter    = document.getElementById('env-letter');
+    const badge     = document.getElementById('env-badge');
+    const modal     = document.getElementById('letter-modal');
+    const card      = document.getElementById('paper-fold-card');
+    const btnFold   = document.getElementById('btn-fold-letter');
+    const backdrop  = document.getElementById('letter-modal-backdrop');
 
+    // ── Buka Surat: Amplop terbuka & pop-up unfold ───────────
     btnOpen.addEventListener('click', () => {
       if (this.envelopeOpened) return;
       this.envelopeOpened = true;
@@ -374,34 +416,99 @@ const App = {
       Haptics.tap();
       this.tryPlayMusic();
 
+      // 1. Envelope wiggles & lid flips open
       envelope.classList.add('opening');
       if (lid) {
-        lid.style.transition = 'transform 0.6s ease';
+        lid.style.transition = 'transform 0.65s cubic-bezier(0.4, 0, 0.2, 1)';
         lid.style.transformOrigin = '100px 30px';
-        lid.style.transform = 'rotateX(-160deg)';
+        lid.style.transform = 'rotateX(-165deg)';
       }
+
       if (letter) {
         setTimeout(() => {
-          letter.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          letter.style.transition = 'opacity 0.4s ease, transform 0.5s ease';
           letter.style.opacity = '1';
-          letter.style.transform = 'translateY(-15px)';
-        }, 400);
+          letter.style.transform = 'translate(50px, -18px)';
+        }, 300);
       }
 
       this.showSparkles(burst);
 
+      // 2. Tampilkan Pop-Up Surat dengan animasi Unfold 3D
       setTimeout(() => {
         Sound.playChime();
-        reveal.classList.add('show');
+        Haptics.medium();
+
+        if (modal && card) {
+          modal.classList.remove('hidden');
+          modal.setAttribute('aria-hidden', 'false');
+          void modal.offsetWidth; // Force reflow
+          modal.classList.add('active');
+
+          card.classList.remove('folding-back');
+          card.classList.add('unfolding');
+        }
+
         btnOpen.classList.add('hidden');
-        setTimeout(() => {
-          btnNext.classList.remove('hidden');
-          btnNext.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 400);
-      }, 700);
+      }, 450);
     });
 
-    // Also allow tapping directly on the envelope
+    // ── Simpan Kembali Surat: Animasi melipat & masuk amplop ──
+    btnFold?.addEventListener('click', () => {
+      Sound.playPaper();
+      Haptics.tap();
+
+      if (card) {
+        card.classList.remove('unfolding');
+        card.classList.add('folding-back');
+      }
+
+      // Kertas mulai meluncur masuk ke amplop -> tutup lid amplop
+      setTimeout(() => {
+        if (lid) {
+          lid.style.transition = 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)';
+          lid.style.transform = 'rotateX(0deg)';
+        }
+        if (letter) {
+          letter.style.transition = 'opacity 0.3s ease, transform 0.4s ease';
+          letter.style.opacity = '0';
+          letter.style.transform = 'translate(50px, 0)';
+        }
+
+        this.showSparkles(burst);
+        Sound.playChime();
+        Haptics.success();
+
+        if (badge) {
+          badge.textContent = 'TERSIMPAN 💌';
+          badge.classList.add('saved');
+        }
+      }, 450);
+
+      // Sembunyikan modal & tampilkan tombol 'Mulai Perjalanan'
+      setTimeout(() => {
+        if (modal) {
+          modal.classList.remove('active');
+          modal.setAttribute('aria-hidden', 'true');
+          setTimeout(() => {
+            modal.classList.add('hidden');
+            if (card) card.classList.remove('folding-back');
+          }, 350);
+        }
+
+        btnNext.classList.remove('hidden');
+        btnNext.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 750);
+    });
+
+    // Tap pada backdrop juga memicu simpan kembali surat dengan ramah
+    backdrop?.addEventListener('click', () => {
+      if (modal?.classList.contains('active')) {
+        btnFold?.click();
+      }
+    });
+
+    // Tap langsung pada amplop memicu buka jika belum terbuka
     envelope?.addEventListener('click', () => {
       if (!this.envelopeOpened) btnOpen.click();
     });
@@ -1144,19 +1251,40 @@ const App = {
 
     const type = () => {
       if (i < text.length) {
-        el.textContent += text[i];
-        if (i % 3 === 0) Sound.playTypewriter();
+        const char = text[i];
+        el.textContent += char;
+        // Suara ketikan typewriter DIHAPUS agar alunan instrumental piano "Sampai Jadi Debu"
+        // terdengar murni, intim, dan menyentuh hati tanpa gangguan klik mesin
         i++;
 
-        // Keep view in sight
+        // Keep view in sight smoothly
         const s6 = document.getElementById('scene-6');
-        if (s6 && (s6.scrollHeight - s6.scrollTop - s6.clientHeight < 140)) {
-          s6.scrollTop = s6.scrollHeight;
+        if (s6 && (s6.scrollHeight - s6.scrollTop - s6.clientHeight < 160)) {
+          s6.scrollTo({
+            top: s6.scrollHeight,
+            behavior: 'smooth'
+          });
         }
 
-        const delay = (text[i - 1] === '\n') ? 50
-                    : (text[i - 1] === ' ') ? 16
-                    : 20;
+        // Pacing lambat & bernafas (tempo liris piano "Sampai Jadi Debu"):
+        const baseSpeed = CONFIG.letterTypingSpeed || 55;
+        let delay = baseSpeed;
+        if (char === '\n') {
+          // Jeda antar-paragraf: jeda hening agar kalimat sebelumnya meresap ke hati
+          delay = (text[i] === '\n') ? Math.round(baseSpeed * 17) : Math.round(baseSpeed * 7);
+        } else if (char === '.' || char === '!' || char === '?') {
+          // Jeda hening di akhir kalimat
+          delay = Math.round(baseSpeed * 12);
+        } else if (char === ',' || char === ';' || char === '—' || char === '-') {
+          // Jeda hembusan nafas di tanda koma
+          delay = Math.round(baseSpeed * 6.5);
+        } else if (char === ' ') {
+          delay = Math.round(baseSpeed * 0.7);
+        } else {
+          // Sedikit variasi natural ketukan manusiawi
+          delay = baseSpeed + Math.floor(Math.random() * 15);
+        }
+
         this.typingTimer = setTimeout(type, delay);
       } else {
         this.onTypingComplete();
@@ -1164,7 +1292,8 @@ const App = {
     };
 
     cursor.style.display = 'inline-block';
-    this.typingTimer = setTimeout(type, 400);
+    // Beri jeda 800ms saat baru masuk Scene 6 agar nada pembuka piano "Sampai Jadi Debu" mulai terdengar syahdu
+    this.typingTimer = setTimeout(type, 800);
   },
 
   skipTyping() {
@@ -1280,7 +1409,26 @@ const App = {
       burst.classList.remove('show');
       burst.innerHTML = '';
     }
-    document.getElementById('opening-reveal')?.classList.remove('show');
+    // Reset modal surat interaktif
+    const modal = document.getElementById('letter-modal');
+    const card  = document.getElementById('paper-fold-card');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.classList.add('hidden');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    if (card) {
+      card.classList.remove('unfolding', 'folding-back');
+      void card.offsetWidth;
+    }
+
+    // Reset badge amplop
+    const badge = document.getElementById('env-badge');
+    if (badge) {
+      badge.textContent = 'TOP SECRET 🔒';
+      badge.classList.remove('saved');
+    }
+
     document.getElementById('btn-open')?.classList.remove('hidden');
     document.getElementById('btn-s1-next')?.classList.add('hidden');
     document.getElementById('envelope-wrapper')?.classList.remove('opening');
@@ -1420,10 +1568,15 @@ const App = {
       s1.scrollTop = 0;
     }
     this.updateProgress(1);
+
+    // 9. Reset music track to journey song
+    if (CONFIG.musicPath) {
+      this.switchMusic(CONFIG.musicPath);
+    }
   },
 
   /* ===========================================================
-     MUSIC PLAYER
+     MUSIC PLAYER (AUTOPLAY & DYNAMIC TRACK CROSSFADE)
      =========================================================== */
   initMusic() {
     const audio  = document.getElementById('bgm');
@@ -1433,8 +1586,10 @@ const App = {
 
     if (!audio) return;
 
-    audio.src = CONFIG.musicPath || './assets/audio/bgm.mp3';
-    audio.volume = CONFIG.musicVolume != null ? CONFIG.musicVolume : 0.25;
+    const initialSrc = CONFIG.musicPath || './assets/audio/bgm-journey.mp3';
+    audio.src = initialSrc;
+    audio.dataset.currentTrack = initialSrc;
+    audio.volume = CONFIG.musicVolume != null ? CONFIG.musicVolume : 0.28;
     audio.loop   = true;
 
     const showPlayer = () => player.classList.remove('hidden');
@@ -1454,26 +1609,56 @@ const App = {
 
     this.tryPlayMusic = () => {
       showPlayer();
-      const play = audio.play();
-      if (play !== undefined) {
-        play.then(() => {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
           this.musicReady = true;
-          fadeIn(CONFIG.musicVolume || 0.25);
+          fadeIn(CONFIG.musicVolume || 0.28);
           btn.textContent   = '🎵';
           label.textContent = 'Music on';
-        }).catch(err => {
+        }).catch(() => {
           btn.textContent   = '▶';
           label.textContent = 'Play';
         });
       }
     };
 
+    // ── Autoplay On-Load + First Touch Fallback ──────────────
+    // 1. Coba langsung play saat halaman dimuat
+    const tryImmediateAutoplay = () => {
+      const p = audio.play();
+      if (p !== undefined) {
+        p.then(() => {
+          this.musicReady = true;
+          showPlayer();
+          fadeIn(CONFIG.musicVolume || 0.28);
+          btn.textContent   = '🎵';
+          label.textContent = 'Music on';
+        }).catch(() => {
+          // 2. Jika browser (Chrome Android) memblokir autoplay sebelum user gesture:
+          // Pasang one-time listener di window agar di sentuhan pertama di mana saja, musik langsung menyala!
+          const onFirstInteraction = () => {
+            this.tryPlayMusic();
+            ['click', 'touchstart', 'pointerdown', 'scroll'].forEach(ev => {
+              window.removeEventListener(ev, onFirstInteraction);
+            });
+          };
+          ['click', 'touchstart', 'pointerdown', 'scroll'].forEach(ev => {
+            window.addEventListener(ev, onFirstInteraction, { once: true, passive: true });
+          });
+        });
+      }
+    };
+
+    // Jalankan percobaan autoplay segera
+    tryImmediateAutoplay();
+
     btn.addEventListener('click', () => {
       if (audio.paused) {
         const p = audio.play();
         if (p) {
           p.then(() => {
-            fadeIn(CONFIG.musicVolume || 0.25);
+            fadeIn(CONFIG.musicVolume || 0.28);
             btn.textContent   = '🎵';
             label.textContent = 'Music on';
           }).catch(() => {});
@@ -1486,9 +1671,56 @@ const App = {
     });
 
     audio.addEventListener('error', () => {
+      // Graceful fallback jika file mp3 belum dimasukkan oleh user
       label.textContent = 'No audio';
       btn.textContent   = '🔇';
     });
+  },
+
+  /* ── Crossfade Switch Music (misal pindah ke Scene 6 Ending) ── */
+  switchMusic(newSrc) {
+    const audio = document.getElementById('bgm');
+    const btn   = document.getElementById('music-btn');
+    const label = document.getElementById('music-label');
+    if (!audio || !newSrc || audio.dataset.currentTrack === newSrc) return;
+
+    const targetVol = CONFIG.musicVolume != null ? CONFIG.musicVolume : 0.28;
+
+    // Jika lagu sedang dimainkan, lakukan fade out halus lalu switch
+    if (!audio.paused && audio.duration > 0) {
+      let curVol = audio.volume;
+      const fadeOutTimer = setInterval(() => {
+        curVol -= 0.04;
+        if (curVol <= 0.02) {
+          clearInterval(fadeOutTimer);
+          audio.volume = 0;
+          audio.src = newSrc;
+          audio.dataset.currentTrack = newSrc;
+          audio.currentTime = 0;
+          const p = audio.play();
+          if (p) {
+            p.then(() => {
+              let inVol = 0;
+              const fadeInTimer = setInterval(() => {
+                inVol += 0.02;
+                if (inVol >= targetVol) {
+                  audio.volume = targetVol;
+                  clearInterval(fadeInTimer);
+                } else {
+                  audio.volume = inVol;
+                }
+              }, 40);
+            }).catch(() => {});
+          }
+        } else {
+          audio.volume = Math.max(0, curVol);
+        }
+      }, 35);
+    } else {
+      // Jika sebelumnya pause / belum jalan, cukup ubah src
+      audio.src = newSrc;
+      audio.dataset.currentTrack = newSrc;
+    }
   },
 
   tryPlayMusic() {},

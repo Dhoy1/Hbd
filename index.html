@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#2D1B4E" />
-  <meta name="description" content="A Little Birthday Journey — sebuah hadiah digital interaktif yang penuh kejutan dan cerita." />
+  <meta name="description"
+    content="A Little Birthday Journey — sebuah hadiah digital interaktif yang penuh kejutan dan cerita." />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -13,7 +15,9 @@
   <!-- Google Fonts Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Caveat:wght@600;700&display=swap"
+    rel="stylesheet" />
 
   <link rel="stylesheet" href="./style.css" />
 </head>
@@ -51,8 +55,8 @@
       <div class="star-field" id="star-field-1" aria-hidden="true"></div>
 
       <div class="scene-content">
-        <!-- Envelope SVG -->
-        <div class="envelope-wrapper" id="envelope-wrapper" aria-hidden="true">
+        <!-- Envelope Element -->
+        <div class="envelope-wrapper" id="envelope-wrapper" aria-label="Amplop Rahasia">
           <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" width="200" height="150">
             <!-- Envelope body -->
             <rect x="5" y="30" width="190" height="115" rx="14" fill="#fff5f9" />
@@ -60,43 +64,68 @@
             <!-- Envelope bottom flap -->
             <path d="M5 145 L5 55 L100 105 L195 55 L195 145 Z" fill="#FFF0F6" />
             <path d="M5 55 L100 105 L195 55" fill="none" stroke="#EFA6B5" stroke-width="1.5" />
+            <!-- Letter peek inside -->
+            <g id="env-letter" opacity="0" transform="translate(50,0)">
+              <rect x="0" y="48" width="100" height="70" rx="8" fill="#FFF9FB" stroke="#EFA6B5" stroke-width="1.5" />
+              <text x="50" y="78" text-anchor="middle" font-size="11" font-weight="bold" fill="#FF6B95">FOR YOU ♡</text>
+              <text x="50" y="98" text-anchor="middle" font-size="18" fill="#EFA6B5">💌</text>
+            </g>
             <!-- Envelope top flap (lid) -->
             <path id="env-lid" d="M5 30 L100 90 L195 30 Z" fill="#F8C8DC" stroke="#EFA6B5" stroke-width="1.5" />
-            <!-- Letter inside (visible when open) -->
-            <g id="env-letter" opacity="0" transform="translate(50,0)">
-              <rect x="0" y="50" width="100" height="70" rx="8" fill="white" stroke="#CDB4DB" stroke-width="1" />
-              <line x1="12" y1="68" x2="88" y2="68" stroke="#CDB4DB" stroke-width="1.5" stroke-linecap="round" />
-              <line x1="12" y1="80" x2="88" y2="80" stroke="#CDB4DB" stroke-width="1.5" stroke-linecap="round" />
-              <line x1="12" y1="92" x2="70" y2="92" stroke="#CDB4DB" stroke-width="1.5" stroke-linecap="round" />
-              <text x="50" y="110" text-anchor="middle" font-size="14" fill="#EFA6B5">♡</text>
-            </g>
             <!-- Ribbon -->
             <line x1="100" y1="30" x2="100" y2="145" stroke="#EFA6B5" stroke-width="1.5" stroke-dasharray="4,4" />
             <!-- Heart seal -->
-            <text x="100" y="72" text-anchor="middle" font-size="22" fill="#EFA6B5">♡</text>
+            <text id="env-heart-seal" x="100" y="72" text-anchor="middle" font-size="22" fill="#EFA6B5">♡</text>
           </svg>
-          <div class="envelope-badge">TOP SECRET 🔒</div>
+          <div class="envelope-badge" id="env-badge">TOP SECRET 🔒</div>
           <div class="sparkle-burst" id="sparkle-burst" aria-hidden="true"></div>
         </div>
 
         <p class="scene-eyebrow text-white mb-8">✦ Dokumen Rahasia ✦</p>
-        <h1 class="scene-title text-white mb-8" id="s1-title">Hey, kamu!</h1>
+        <h1 class="scene-title text-white mb-8" id="s1-title">Hey, Cantik</h1>
         <p class="scene-subtitle text-white" id="s1-subtitle"></p>
 
-        <!-- Post-open reveal -->
-        <div class="opening-reveal" id="opening-reveal">
-          <p class="scene-subtitle text-white mb-16" style="font-style:italic; font-size:14px;">
-            ✉️ &nbsp; Ada sebuah perjalanan kecil yang disiapkan khusus untukmu hari ini... &nbsp; ✉️
-          </p>
-        </div>
-
         <button id="btn-open" class="btn-primary mt-12">
-          ✨ Buka dong!
+          ✨ Buka dong cantik!
         </button>
 
-        <button id="btn-s1-next" class="btn-secondary mt-16 hidden">
+        <button id="btn-s1-next" class="btn-primary mt-16 hidden">
           Mulai Perjalanan &nbsp; →
         </button>
+      </div>
+
+      <!-- ── Pop-Up Surat Interaktif (Modal Unfold & Fold) ────── -->
+      <div id="letter-modal" class="letter-modal hidden" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="letter-modal-backdrop" id="letter-modal-backdrop"></div>
+        <div class="letter-modal-dialog">
+          <!-- 3D Paper Letter Container -->
+          <div class="paper-fold-card" id="paper-fold-card">
+            <div class="paper-top-strip"></div>
+            <div class="paper-letter-body">
+              <div class="mini-letter-header">
+                <span class="mini-letter-badge" id="s1-card-badge">💌 DOKUMEN RAHASIA</span>
+                <span class="mini-letter-stamp">🎂</span>
+              </div>
+              <h3 class="mini-letter-title" id="s1-card-title">Happy Birthday, Cantik! 🎂✨</h3>
+              <div class="mini-letter-divider"></div>
+              <div class="paper-scroll-content">
+                <p class="mini-letter-body" id="s1-card-body">
+                  Hari ini adalah harinya kamu. Gak boleh cemberut, dilarang overthinking, dan wajib bahagia seharian penuh! Ada sebuah perjalanan kecil penuh kejutan yang udah disiapin spesial buat kamu. Siap melihatnya? 🌸
+                </p>
+                <p class="mini-letter-footer" id="s1-card-footer">
+                  — Jangan lupa senyum dulu sebelum mulai ya~ ♡
+                </p>
+              </div>
+              <!-- Action Button to Fold Letter Back & Return into Envelope -->
+              <div class="paper-action-area">
+                <button type="button" id="btn-fold-letter" class="btn-fold-back">
+                  📥 Simpan kembali surat ini
+                </button>
+              </div>
+            </div>
+            <div class="paper-crease-shadow"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -121,7 +150,9 @@
           </div>
           <div class="scanner-info">
             <p class="scanner-status" id="scanner-status">Status: Menunggu verifikasi</p>
-            <div class="scanner-bar"><div class="scanner-bar-fill" id="scanner-bar-fill"></div></div>
+            <div class="scanner-bar">
+              <div class="scanner-bar-fill" id="scanner-bar-fill"></div>
+            </div>
           </div>
           <button id="btn-start-scan" class="btn-scan">⚡ Pindai Wajah Sekarang</button>
           <div class="scanner-result hidden" id="scanner-result"></div>
@@ -302,7 +333,8 @@
               <rect x="20" y="90" width="160" height="120" rx="10" fill="#FFF0F6" />
               <rect x="20" y="90" width="160" height="120" rx="10" fill="none" stroke="#EFA6B5" stroke-width="2.5" />
               <line x1="100" y1="90" x2="100" y2="210" stroke="#F8C8DC" stroke-width="8" />
-              <rect id="gift-lid-svg" x="10" y="72" width="180" height="32" rx="8" fill="#EFA6B5" stroke="#D4849A" stroke-width="2" />
+              <rect id="gift-lid-svg" x="10" y="72" width="180" height="32" rx="8" fill="#EFA6B5" stroke="#D4849A"
+                stroke-width="2" />
               <rect x="91" y="72" width="18" height="32" fill="rgba(255,255,255,0.3)" />
               <rect x="91" y="20" width="18" height="72" fill="#CDB4DB" />
               <ellipse cx="70" cy="42" rx="28" ry="16" fill="#CDB4DB" transform="rotate(-30, 70, 42)" />
@@ -359,14 +391,21 @@
       <div class="night-stars" id="night-stars" aria-hidden="true"></div>
 
       <div class="scene-content" style="max-width:460px; padding-bottom:40px;">
-        <p class="scene-eyebrow mt-8 mb-8" style="color:rgba(255,255,255,0.65);">✉️ Sebuah Surat Kecil</p>
+        <!-- Warm Candlelight / Starlight Aura Glow -->
+        <div class="scene6-aura-glow" aria-hidden="true"></div>
+
+        <p class="scene-eyebrow mt-8 mb-8" style="color:rgba(255,255,255,0.7);">✉️ Sebuah Surat Kecil</p>
         <h2 class="scene-title mb-4" style="color:var(--white);">Before You Go...</h2>
-        <p style="font-family:var(--font-letter); font-size:14px; font-style:italic; color:rgba(255,255,255,0.7); margin-bottom:20px;">
+        <p
+          style="font-family:var(--font-letter); font-size:14.5px; font-style:italic; color:rgba(255,230,238,0.78); margin-bottom:20px;">
           There's something I want you to know.
         </p>
 
         <!-- Letter container -->
         <div class="letter-container">
+          <div class="letter-badge-wrapper">
+            <span class="letter-sweet-badge">💌 Dari Lubuk Hati Terbawah ♡</span>
+          </div>
           <div class="letter-divider"></div>
           <div id="letter-text" aria-live="polite" aria-label="Birthday letter"></div>
           <div id="letter-cursor" class="letter-cursor"></div>
@@ -375,6 +414,7 @@
           <div class="letter-closing hidden" id="letter-closing">
             <p class="closing-with-love" id="closing-with-love"></p>
             <p class="closing-name" id="closing-name"></p>
+            <div class="closing-heart-beat" aria-hidden="true">❤️</div>
           </div>
         </div>
 
@@ -394,7 +434,8 @@
           </div>
 
           <div class="wish-input-wrap">
-            <input type="text" id="wish-input" class="wish-input" placeholder="Tulis harapanmu di sini..." maxlength="80" />
+            <input type="text" id="wish-input" class="wish-input" placeholder="Tulis harapanmu di sini..."
+              maxlength="80" />
             <button id="btn-fly-lantern" class="btn-lantern">✨ Terbangkan</button>
           </div>
           <p class="lantern-status hidden" id="lantern-status"></p>
@@ -402,7 +443,8 @@
 
         <!-- 🤗 Feature 2: Long-Press Virtual Hug (hidden until lantern flown) -->
         <div class="hug-section mt-24 hidden" id="hug-section">
-          <p class="hug-instruction">Tahan tombol di bawah ini selama <strong>3 detik</strong> untuk menerima pelukan hangat...</p>
+          <p class="hug-instruction">Tahan tombol di bawah ini selama <strong>3 detik</strong> untuk menerima pelukan
+            hangat...</p>
           <div class="hug-button-wrap">
             <button id="btn-hug-hold" class="btn-hug-hold" aria-label="Tahan untuk pelukan virtual">
               <svg class="hug-ring-svg" viewBox="0 0 100 100">
@@ -434,10 +476,11 @@
   </div><!-- /#app -->
 
   <!-- Hidden audio element for background music -->
-  <audio id="bgm" loop preload="none" aria-hidden="true"></audio>
+  <audio id="bgm" loop preload="auto" aria-hidden="true"></audio>
 
   <!-- Scripts: Relative paths for 100% GitHub Pages & Vercel compatibility -->
   <script src="./config.js"></script>
   <script src="./script.js"></script>
 </body>
+
 </html>

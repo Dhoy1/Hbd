@@ -363,6 +363,7 @@ button {
   100% { transform: translateY(-30px) rotate(180deg); opacity: 0.3; }
 }
 
+/* ── Envelope Element ─────────────────────────────────────── */
 .envelope-wrapper {
   position: relative;
   width: 200px;
@@ -371,6 +372,8 @@ button {
   filter: drop-shadow(0 12px 32px rgba(94, 69, 111, 0.25));
   animation: envFloat 3s ease-in-out infinite;
   flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
 @keyframes envFloat {
@@ -403,6 +406,13 @@ button {
   box-shadow: 0 4px 10px rgba(255, 107, 149, 0.4);
   transform: rotate(8deg);
   pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.envelope-badge.saved {
+  background: linear-gradient(135deg, #10B981, #059669);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  transform: rotate(-4deg) scale(1.05);
 }
 
 .sparkle-burst {
@@ -426,12 +436,277 @@ button {
   100% { transform: scale(1.2) translate(var(--dx), var(--dy)); opacity: 0; }
 }
 
-.opening-reveal {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.8s ease;
+/* ══════════════════════════════════════════════════════════
+   INTERACTIVE POP-UP SURAT (3D UNFOLD & FOLD MODAL)
+   ══════════════════════════════════════════════════════════ */
+.letter-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
 }
-.opening-reveal.show { max-height: 200px; }
+
+.letter-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.letter-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(45, 27, 78, 0.62);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity 0.4s ease;
+}
+
+.letter-modal-dialog {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 345px;
+  perspective: 1200px;
+  display: flex;
+  justify-content: center;
+}
+
+/* The physical paper card */
+.paper-fold-card {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(165deg, #FFFFFF 0%, #FFF9FB 55%, #FFF0F6 100%);
+  border: 1.5px dashed rgba(239, 166, 181, 0.95);
+  border-radius: 22px;
+  box-shadow:
+    0 24px 50px rgba(45, 27, 78, 0.38),
+    0 8px 20px rgba(255, 107, 149, 0.22);
+  overflow: hidden;
+  transform-origin: center center;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Subtle ruled notebook lines on paper */
+.paper-fold-card::before {
+  content: '';
+  position: absolute;
+  inset: 38px 0 0 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 23px,
+    rgba(239, 166, 181, 0.16) 23px,
+    rgba(239, 166, 181, 0.16) 24px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Decorative torn/wavy top strip */
+.paper-top-strip {
+  width: 100%;
+  height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    #FFF0F5 0px, #FFF0F5 10px,
+    #FCE4EC 10px, #FCE4EC 20px
+  );
+  border-bottom: 1px dashed rgba(239, 166, 181, 0.5);
+  opacity: 0.85;
+}
+
+/* Inner content area */
+.paper-letter-body {
+  position: relative;
+  z-index: 1;
+  padding: 18px 20px 20px;
+  text-align: left;
+}
+
+.paper-scroll-content {
+  max-height: 48vh;
+  overflow-y: auto;
+  padding-right: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.paper-scroll-content::-webkit-scrollbar {
+  width: 4px;
+}
+.paper-scroll-content::-webkit-scrollbar-thumb {
+  background: rgba(239, 166, 181, 0.6);
+  border-radius: 4px;
+}
+
+/* ── Unfold Animation (Emerging from envelope & spreading flat) ── */
+.paper-fold-card.unfolding {
+  animation: cardEmergeAndUnfold 0.85s cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
+}
+
+@keyframes cardEmergeAndUnfold {
+  0% {
+    opacity: 0;
+    transform: translateY(240px) scale(0.22) rotateX(75deg);
+    filter: blur(2px);
+  }
+  30% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  60% {
+    transform: translateY(-16px) scale(0.92) rotateX(18deg);
+  }
+  80% {
+    transform: translateY(6px) scale(1.02) rotateX(-6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0deg);
+  }
+}
+
+/* ── Fold & Return Animation (Folding up & going down into envelope) ── */
+.paper-fold-card.folding-back {
+  animation: cardFoldAndReturn 0.68s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+
+@keyframes cardFoldAndReturn {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0deg);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(-24px) scale(0.94) rotateX(-16deg);
+  }
+  60% {
+    opacity: 0.9;
+    transform: translateY(90px) scale(0.62) rotateX(55deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(270px) scale(0.18) rotateX(85deg);
+  }
+}
+
+/* ── Crease 3D shadow when folding ── */
+.paper-crease-shadow {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(94, 69, 111, 0.15);
+  box-shadow: 0 0 10px 2px rgba(94, 69, 111, 0.15);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.paper-fold-card.folding-back .paper-crease-shadow {
+  opacity: 1;
+}
+
+/* ── Action Button: Simpan kembali surat ini ── */
+.paper-action-area {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(239, 166, 181, 0.6);
+  text-align: center;
+}
+
+.btn-fold-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 30px;
+  font-family: var(--font-heading);
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FF6B95 0%, #BA7BA1 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 16px rgba(255, 107, 149, 0.38);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  text-shadow: 0 1px 2px rgba(94, 69, 111, 0.25);
+}
+
+.btn-fold-back:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(255, 107, 149, 0.5);
+  filter: brightness(1.05);
+}
+
+.btn-fold-back:active {
+  transform: scale(0.96);
+}
+
+/* ── Typography & Elements inside Letter ── */
+.mini-letter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mini-letter-badge {
+  background: linear-gradient(135deg, #FF6B95, #FF8EAB);
+  color: #FFF;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(255, 107, 149, 0.35);
+  text-transform: uppercase;
+}
+
+.mini-letter-stamp {
+  font-size: 22px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.mini-letter-title {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #4A3B52;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.mini-letter-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #EFA6B5, transparent);
+  margin-bottom: 12px;
+}
+
+.mini-letter-body {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #5E456F;
+  margin-bottom: 14px;
+}
+
+.mini-letter-footer {
+  font-size: 12px;
+  font-style: italic;
+  color: #FF6B95;
+  font-weight: 600;
+  text-align: right;
+  margin: 0;
+}
 
 /* ============================================================
    SCENE 2 — BIRTHDAY CHECK & SILLY AGE SCANNER
@@ -1106,14 +1381,42 @@ button {
 }
 
 /* ============================================================
-   SCENE 6 — THE HEARTFELT ENDING (LANTERN & HUG)
+   SCENE 6 — THE HEARTFELT ENDING (DEEP NIGHT SKY & WARM LETTER)
    ============================================================ */
 #scene-6 {
-  background: linear-gradient(180deg, #120A21 0%, #201338 35%, #351C56 75%, #4A266F 100%);
+  background: radial-gradient(circle at 50% 25%, #231238 0%, #150926 50%, #090314 100%);
+  position: relative;
+  overflow-x: hidden;
 }
 
 #scene-6::before {
   display: none;
+}
+
+/* Ambient Candlelight / Aura Glow behind the letter */
+.scene6-aura-glow {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90vw, 380px);
+  height: 380px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 180, 195, 0.16) 0%,
+    rgba(255, 214, 165, 0.09) 38%,
+    rgba(214, 165, 255, 0.05) 60%,
+    transparent 75%
+  );
+  filter: blur(45px);
+  pointer-events: none;
+  z-index: 0;
+  animation: auraBreathe 7s ease-in-out infinite alternate;
+}
+
+@keyframes auraBreathe {
+  0%   { transform: translateX(-50%) scale(0.92); opacity: 0.65; }
+  100% { transform: translateX(-50%) scale(1.12); opacity: 0.95; }
 }
 
 .night-stars {
@@ -1121,35 +1424,75 @@ button {
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  z-index: 0;
 }
 
 .night-star {
   position: absolute;
-  background: white;
+  background: #FFF;
   border-radius: 50%;
   animation: twinkle var(--dur, 3s) ease-in-out infinite;
   animation-delay: var(--delay, 0s);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
+  0%, 100% { opacity: 0.2; transform: scale(0.85); }
   50%       { opacity: 1; transform: scale(1.4); }
 }
 
-/* Letter Container */
+/* Floating Stardust / Warm Fireflies drifting softly */
+.stardust-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFF7D6 0%, #FFAAA6 70%, transparent 100%);
+  pointer-events: none;
+  animation: stardustFloat var(--dur, 10s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  box-shadow: 0 0 10px 1px rgba(255, 214, 165, 0.6);
+  will-change: transform, opacity;
+}
+
+@keyframes stardustFloat {
+  0% {
+    transform: translateY(105vh) translateX(0) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-5vh) translateX(var(--drift, 30px)) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* ── Romantic Glassmorphic Letter Container ───────────────── */
 .letter-container {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: var(--radius-lg);
-  padding: 28px 22px 24px;
+  background: linear-gradient(
+    175deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 245, 248, 0.05) 100%
+  );
+  border: 1.5px solid rgba(255, 222, 232, 0.28);
+  border-radius: 24px;
+  padding: 26px 22px 24px;
   max-width: 440px;
   width: 100%;
   margin: 0 auto;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(255, 180, 195, 0.12),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.35);
   text-align: left;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .letter-container::before {
@@ -1159,60 +1502,115 @@ button {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--rose), var(--lavender), var(--rose));
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 170, 166, 0.5) 20%,
+    #FFD3B6 50%,
+    rgba(255, 170, 166, 0.5) 80%,
+    transparent 100%
+  );
+}
+
+.letter-badge-wrapper {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.letter-sweet-badge {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #FFE5EC;
+  background: rgba(255, 107, 149, 0.22);
+  border: 1px solid rgba(255, 182, 193, 0.4);
+  padding: 4px 12px;
+  border-radius: 12px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 10px rgba(255, 107, 149, 0.15);
 }
 
 .letter-divider {
-  width: 60px;
+  width: 80px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  margin: 0 auto 18px;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 225, 0.5), transparent);
+  margin: 0 auto 20px;
 }
 
 #letter-text {
   font-family: var(--font-letter);
-  font-size: 14.5px;
-  line-height: 1.85;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  line-height: 1.95;
+  color: #FFF9FA;
+  text-shadow: 0 1px 12px rgba(255, 220, 230, 0.22);
   white-space: pre-wrap;
   min-height: 60px;
+  letter-spacing: 0.25px;
 }
 
 .letter-cursor {
   display: inline-block;
-  width: 2px;
-  height: 18px;
-  background: var(--rose);
-  margin-left: 2px;
+  width: 2.5px;
+  height: 19px;
+  background: #FFB4A2;
+  margin-left: 3px;
   vertical-align: middle;
-  animation: blink 0.8s step-end infinite;
+  border-radius: 2px;
+  box-shadow: 0 0 10px #FFB4A2, 0 0 20px rgba(255, 180, 162, 0.8);
+  animation: cursorBlink 0.9s ease-in-out infinite;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; transform: scaleY(1); }
+  50%      { opacity: 0.2; transform: scaleY(0.8); }
 }
 
 .letter-closing {
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   text-align: center;
+  animation: letterFadeIn 1.2s ease forwards;
+}
+
+@keyframes letterFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .closing-with-love {
-  font-family: var(--font-letter);
-  font-size: 15px;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 4px;
+  font-family: var(--font-hand);
+  font-size: 20px;
+  color: rgba(255, 235, 240, 0.9);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
 }
 
 .closing-name {
   font-family: var(--font-heading);
-  font-size: 18px;
-  color: var(--rose);
+  font-size: 20px;
+  color: #FFCAD4;
   font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 16px rgba(255, 202, 212, 0.45);
+}
+
+.closing-heart-beat {
+  font-size: 26px;
+  margin-top: 10px;
+  display: inline-block;
+  animation: romanticHeartPulse 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(255, 107, 149, 0.8));
+}
+
+@keyframes romanticHeartPulse {
+  0%, 100% { transform: scale(1); }
+  15%      { transform: scale(1.22); }
+  30%      { transform: scale(1.06); }
+  45%      { transform: scale(1.18); }
 }
 
 .skip-typing-btn {
@@ -1225,10 +1623,12 @@ button {
   padding: 8px;
   text-decoration: underline;
   display: block;
-  margin: 10px auto 0;
+  margin: 14px auto 0;
   transition: color 0.2s ease;
+  z-index: 2;
+  position: relative;
 }
-.skip-typing-btn:hover { color: rgba(255, 255, 255, 0.8); }
+.skip-typing-btn:hover { color: rgba(255, 255, 255, 0.85); }
 
 /* 🏮 Sky Lantern Feature */
 .lantern-box {

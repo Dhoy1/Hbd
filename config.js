@@ -13,8 +13,14 @@ const CONFIG = {
   senderName: "Mas Idoy Ganteng Pake Banget", // Nama kamu (pengirim)
   pageTitle: "A Little Birthday Journey 🎂",
 
-  // ── Scene 1 — Pembuka ──────────────────────────────────────
+  // ── Scene 1 — Pembuka & Surat Mini Amplop ──────────────────
   openingMessage: "Kayaknya ada sesuatu yang spesial dan rahasia buat kamu hari ini...",
+  envelopeLetter: {
+    badge: "💌 DOKUMEN RAHASIA",
+    title: "Happy Birthday, Cantik! 🎂✨",
+    content: "Hari ini adalah harinya kamu. Gak boleh cemberut, dilarang overthinking, dan wajib bahagia seharian penuh! Ada sebuah perjalanan kecil penuh kejutan yang udah disiapin spesial buat kamu. Siap melihatnya? 🌸",
+    footer: "— Jangan lupa senyum dulu sebelum mulai ya~ ♡"
+  },
 
   // ── Scene 2 — Age / Face Scanner Konyol ─────────────────────
   // Hasil scan wajah yang akan muncul secara acak / bergantian
@@ -110,9 +116,18 @@ The world is truly a little better with you in it.`,
   closingMessage: "With love,",
 
   // ── Pengaturan Audio & Efek ────────────────────────────────
-  musicPath: "./assets/audio/bgm.mp3",
-  musicVolume: 0.25,   // Volume musik latar (0.0 – 1.0)
+  // Lagu 1: Musik Scene 1 s/d Scene 5 (Suasana ceria, manis, playful)
+  musicPath: "./assets/audio/1.mp3",
+
+  // Lagu 2: Musik khusus Scene 6 Ending (Suasana emosional, haru, piano lembut)
+  endingMusicPath: "./assets/audio/2.mp3",
+
+  musicVolume: 0.28,   // Volume musik latar (0.0 – 1.0)
   soundEffects: true,   // Efek suara sintesis (Web Audio API lokal)
-  hapticFeedback: true    // Getaran pelukan di smartphone Android (Vibration API)
+  hapticFeedback: true,   // Getaran pelukan di smartphone Android (Vibration API)
+
+  // Kecepatan ketikan surat di Scene 6 (dalam ms per karakter, default: 55ms)
+  // Makin besar angkanya (misal 65 - 75), makin lambat dan syahdu menyesuaikan alunan lagu
+  letterTypingSpeed: 55
 
 };
