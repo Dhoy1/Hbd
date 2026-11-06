@@ -174,48 +174,48 @@ const Sound = {
 const Haptics = {
   vibrate(pattern) {
     if (CONFIG.hapticFeedback && 'vibrate' in navigator) {
-      try { navigator.vibrate(pattern); } catch (e) {}
+      try { navigator.vibrate(pattern); } catch (e) { }
     }
   },
-  tap()       { this.vibrate(30); },
-  medium()    { this.vibrate(60); },
-  error()     { this.vibrate([40, 50, 40]); },
-  success()   { this.vibrate([50, 70, 90]); },
+  tap() { this.vibrate(30); },
+  medium() { this.vibrate(60); },
+  error() { this.vibrate([40, 50, 40]); },
+  success() { this.vibrate([50, 70, 90]); },
   heartbeat() { this.vibrate([70, 100, 70]); },
-  big()       { this.vibrate(200); }
+  big() { this.vibrate(200); }
 };
 
 /* ============================================================
    MAIN APP CONTROLLER
    ============================================================ */
 const App = {
-  currentScene   : 1,
-  totalScenes    : 6,
-  carouselIndex  : 0,
-  typingTimer    : null,
-  typingDone     : false,
-  musicReady     : false,
+  currentScene: 1,
+  totalScenes: 6,
+  carouselIndex: 0,
+  typingTimer: null,
+  typingDone: false,
+  musicReady: false,
 
   // Scene 1 State
-  envelopeOpened : false,
+  envelopeOpened: false,
 
   // Scene 2 State
-  scanInterval   : null,
+  scanInterval: null,
 
   // Scene 3 Whack-a-Bintang Usil State
-  whackScore        : 0,
-  whackTarget       : 7,
-  whackPlaying      : false,
-  whackTimer        : null,
-  whackPopDownTimer : null,
-  whackActiveHole   : null,
-  whackActiveType   : null, // 'star', 'cheeky', 'zonk', 'cat'
-  whackDodged       : false,
+  whackScore: 0,
+  whackTarget: 7,
+  whackPlaying: false,
+  whackTimer: null,
+  whackPopDownTimer: null,
+  whackActiveHole: null,
+  whackActiveType: null, // 'star', 'cheeky', 'zonk', 'cat'
+  whackDodged: false,
 
   // Scene 6 Hug Hold State
-  hugHolding   : false,
-  hugHoldTimer : null,
-  hugProgress  : 0,
+  hugHolding: false,
+  hugHoldTimer: null,
+  hugProgress: 0,
 
   /* ── Init ──────────────────────────────────────────────── */
   init() {
@@ -241,21 +241,21 @@ const App = {
 
     // Scene 1 Mini Letter Card
     if (CONFIG.envelopeLetter) {
-      const cardBadge  = document.getElementById('s1-card-badge');
-      const cardTitle  = document.getElementById('s1-card-title');
-      const cardBody   = document.getElementById('s1-card-body');
+      const cardBadge = document.getElementById('s1-card-badge');
+      const cardTitle = document.getElementById('s1-card-title');
+      const cardBody = document.getElementById('s1-card-body');
       const cardFooter = document.getElementById('s1-card-footer');
 
-      if (cardBadge  && CONFIG.envelopeLetter.badge)   cardBadge.textContent  = CONFIG.envelopeLetter.badge;
-      if (cardTitle  && CONFIG.envelopeLetter.title)   cardTitle.textContent  = CONFIG.envelopeLetter.title;
-      if (cardBody   && CONFIG.envelopeLetter.content) cardBody.textContent   = CONFIG.envelopeLetter.content;
-      if (cardFooter && CONFIG.envelopeLetter.footer)  cardFooter.textContent = CONFIG.envelopeLetter.footer;
+      if (cardBadge && CONFIG.envelopeLetter.badge) cardBadge.textContent = CONFIG.envelopeLetter.badge;
+      if (cardTitle && CONFIG.envelopeLetter.title) cardTitle.textContent = CONFIG.envelopeLetter.title;
+      if (cardBody && CONFIG.envelopeLetter.content) cardBody.textContent = CONFIG.envelopeLetter.content;
+      if (cardFooter && CONFIG.envelopeLetter.footer) cardFooter.textContent = CONFIG.envelopeLetter.footer;
     }
 
     const closingWithLove = document.getElementById('closing-with-love');
-    const closingName     = document.getElementById('closing-name');
+    const closingName = document.getElementById('closing-name');
     if (closingWithLove) closingWithLove.textContent = CONFIG.closingMessage || 'With love,';
-    if (closingName)     closingName.textContent     = CONFIG.senderName || 'Someone Special';
+    if (closingName) closingName.textContent = CONFIG.senderName || 'Someone Special';
 
     // Scene 3 Whack Game target
     const whackTargetEl = document.getElementById('whack-target');
@@ -286,12 +286,12 @@ const App = {
     if (CONFIG.zonkPrize) {
       const zBadge = document.getElementById('zonk-badge');
       const zTitle = document.getElementById('zonk-title');
-      const zSub   = document.getElementById('zonk-subtitle');
+      const zSub = document.getElementById('zonk-subtitle');
       const zFakeBtn = document.getElementById('btn-claim-fake');
       const zRealBtn = document.getElementById('btn-open-real');
       if (zBadge) zBadge.textContent = CONFIG.zonkPrize.badge || '🎉 SELAMAT!';
       if (zTitle) zTitle.textContent = CONFIG.zonkPrize.title || 'Voucher Overthinking!';
-      if (zSub)   zSub.textContent   = CONFIG.zonkPrize.subtitle || '';
+      if (zSub) zSub.textContent = CONFIG.zonkPrize.subtitle || '';
       if (zFakeBtn) zFakeBtn.textContent = CONFIG.zonkPrize.fakeButton || 'Klaim Voucher 🛌';
       if (zRealBtn) zRealBtn.textContent = CONFIG.zonkPrize.realButton || '🎀 Buka Kado Aslinya!';
     }
@@ -300,7 +300,7 @@ const App = {
   /* ── Scene Transition ──────────────────────────────────── */
   goToScene(num) {
     const current = document.getElementById(`scene-${this.currentScene}`);
-    const next    = document.getElementById(`scene-${num}`);
+    const next = document.getElementById(`scene-${num}`);
     if (!next || num === this.currentScene) return;
 
     current.classList.add('exit-left');
@@ -327,7 +327,7 @@ const App = {
     const dots = document.querySelectorAll('.progress-dot');
     dots.forEach((dot, idx) => {
       dot.classList.remove('active', 'done');
-      if (idx + 1 < sceneNum)  dot.classList.add('done');
+      if (idx + 1 < sceneNum) dot.classList.add('done');
       if (idx + 1 === sceneNum) dot.classList.add('active');
     });
   },
@@ -395,17 +395,17 @@ const App = {
      SCENE 1 — THE SECRET ENVELOPE
      =========================================================== */
   initScene1() {
-    const btnOpen   = document.getElementById('btn-open');
-    const btnNext   = document.getElementById('btn-s1-next');
-    const envelope  = document.getElementById('envelope-wrapper');
-    const burst     = document.getElementById('sparkle-burst');
-    const lid       = document.getElementById('env-lid');
-    const letter    = document.getElementById('env-letter');
-    const badge     = document.getElementById('env-badge');
-    const modal     = document.getElementById('letter-modal');
-    const card      = document.getElementById('paper-fold-card');
-    const btnFold   = document.getElementById('btn-fold-letter');
-    const backdrop  = document.getElementById('letter-modal-backdrop');
+    const btnOpen = document.getElementById('btn-open');
+    const btnNext = document.getElementById('btn-s1-next');
+    const envelope = document.getElementById('envelope-wrapper');
+    const burst = document.getElementById('sparkle-burst');
+    const lid = document.getElementById('env-lid');
+    const letter = document.getElementById('env-letter');
+    const badge = document.getElementById('env-badge');
+    const modal = document.getElementById('letter-modal');
+    const card = document.getElementById('paper-fold-card');
+    const btnFold = document.getElementById('btn-fold-letter');
+    const backdrop = document.getElementById('letter-modal-backdrop');
 
     // ── Buka Surat: Amplop terbuka & pop-up unfold ───────────
     btnOpen.addEventListener('click', () => {
@@ -529,7 +529,7 @@ const App = {
       sp.className = 'sp';
       sp.textContent = emojis[Math.floor(Math.random() * emojis.length)];
       const angle = (Math.PI * 2 * i) / 8;
-      const dist  = 50 + Math.random() * 30;
+      const dist = 50 + Math.random() * 30;
       sp.style.cssText = `
         top:50%; left:50%;
         --dx:${Math.round(Math.cos(angle) * dist)}px;
@@ -549,14 +549,14 @@ const App = {
      =========================================================== */
   initScene2() {
     const scannerCard = document.getElementById('scanner-card');
-    const btnScan     = document.getElementById('btn-start-scan');
-    const barFill     = document.getElementById('scanner-bar-fill');
-    const statusText  = document.getElementById('scanner-status');
-    const resultBox   = document.getElementById('scanner-result');
-    const checkQ      = document.getElementById('check-question');
-    const cards       = document.querySelectorAll('.answer-card');
-    const bubble      = document.getElementById('response-bubble');
-    const btnNext     = document.getElementById('btn-s2-next');
+    const btnScan = document.getElementById('btn-start-scan');
+    const barFill = document.getElementById('scanner-bar-fill');
+    const statusText = document.getElementById('scanner-status');
+    const resultBox = document.getElementById('scanner-result');
+    const checkQ = document.getElementById('check-question');
+    const cards = document.querySelectorAll('.answer-card');
+    const bubble = document.getElementById('response-bubble');
+    const btnNext = document.getElementById('btn-s2-next');
 
     // Scanning trigger
     btnScan.addEventListener('click', () => {
@@ -608,7 +608,7 @@ const App = {
           Sound.playChime();
           Haptics.success();
           this.showSparkles(document.getElementById('sparkle-burst'));
-          bubble.textContent = '🎉 Betul banget! Hari ini adalah hari spesialmu. Selamat bertambah usia! 🎂';
+          bubble.textContent = '🎉 Betul banget! Hari ini adalah hari spesialmu. Selamat bertambah usia NDUTT! 🎂';
           bubble.classList.remove('hidden');
           cards.forEach(c => { c.style.pointerEvents = 'none'; c.style.opacity = '0.7'; });
           card.style.opacity = '1';
@@ -621,8 +621,8 @@ const App = {
           Sound.playBoing();
           Haptics.error();
           const msgs = {
-            'wrong-1': '😅 Tetangga sebelah?? Kayaknya bukan dia deh... jangan nyasar dong! Coba lagi! 😄',
-            'wrong-2': '🐱 Kucing tetangga? Haha, dia sih tiap hari rebahan! Bukan dia dong... 😹'
+            'wrong-1': '😅 Tetangga sebelah?? Kamu kan gapunya tetangga KOCAKK!! Coba lagi! 😄',
+            'wrong-2': '🐱 Kucing oyen? Haha, dia sih tiap hari rebahan! Bukan dia dong... 😹'
           };
           bubble.textContent = msgs[answer] || 'Bukan itu jawabannya. Coba sekali lagi ya! 😊';
           bubble.classList.remove('hidden');
@@ -643,8 +643,8 @@ const App = {
      =========================================================== */
   initScene3() {
     const btnStart = document.getElementById('btn-start-whack');
-    const btnNext  = document.getElementById('btn-s3-next');
-    const holes    = document.querySelectorAll('.whack-hole');
+    const btnNext = document.getElementById('btn-s3-next');
+    const holes = document.querySelectorAll('.whack-hole');
 
     btnStart.addEventListener('click', () => {
       Sound.playChime();
@@ -685,16 +685,16 @@ const App = {
   },
 
   startWhackGame() {
-    this.whackScore   = 0;
-    this.whackTarget  = CONFIG.whackGame?.targetStars || 7;
+    this.whackScore = 0;
+    this.whackTarget = CONFIG.whackGame?.targetStars || 7;
     this.whackPlaying = true;
 
-    const scoreEl  = document.getElementById('whack-score');
+    const scoreEl = document.getElementById('whack-score');
     const targetEl = document.getElementById('whack-target');
-    const comboEl  = document.getElementById('whack-combo');
-    if (scoreEl)  scoreEl.textContent  = '0';
+    const comboEl = document.getElementById('whack-combo');
+    if (scoreEl) scoreEl.textContent = '0';
     if (targetEl) targetEl.textContent = this.whackTarget;
-    if (comboEl)  comboEl.textContent  = 'Mulai tangkap! 🔥';
+    if (comboEl) comboEl.textContent = 'Mulai tangkap! 🔥';
 
     document.getElementById('btn-start-whack')?.classList.add('hidden');
     document.getElementById('whack-success')?.classList.add('hidden');
@@ -752,7 +752,7 @@ const App = {
 
     this.whackActiveHole = newHole;
     this.whackActiveType = type;
-    this.whackDodged     = false;
+    this.whackDodged = false;
 
     const actor = document.getElementById(`mole-${newHole}`);
     if (actor) {
@@ -783,7 +783,7 @@ const App = {
     clearTimeout(this.whackPopDownTimer);
 
     const actor = document.getElementById(`mole-${holeIdx}`);
-    const type  = this.whackActiveType;
+    const type = this.whackActiveType;
 
     // CASE 1: Dodge Star (Kabur saat mau disentuh, 0 poin)
     if (type === 'dodge_star') {
@@ -943,7 +943,7 @@ const App = {
       container.addEventListener('touchstart', (e) => {
         this.carouselSwipeStartX = e.touches[0].clientX;
         this.carouselSwipeStartY = e.touches[0].clientY;
-        this.carouselIsDragging  = true;
+        this.carouselIsDragging = true;
       }, { passive: true });
 
       container.addEventListener('touchend', (e) => {
@@ -953,7 +953,7 @@ const App = {
         if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
           Sound.playPaper();
           dx < 0 ? this.setCarousel(this.carouselIndex + 1)
-                 : this.setCarousel(this.carouselIndex - 1);
+            : this.setCarousel(this.carouselIndex - 1);
         }
         this.carouselIsDragging = false;
       }, { passive: true });
@@ -977,27 +977,27 @@ const App = {
   },
 
   buildPolaroidSlides() {
-    const track    = document.getElementById('carousel-track');
+    const track = document.getElementById('carousel-track');
     const dotsWrap = document.getElementById('carousel-dots');
     if (!track) return;
 
     track.innerHTML = '';
     dotsWrap.innerHTML = '';
 
-    const photos   = CONFIG.memoryPhotos   || [];
+    const photos = CONFIG.memoryPhotos || [];
     const captions = CONFIG.memoryCaptions || [];
-    const secrets  = CONFIG.secretNotes    || [];
+    const secrets = CONFIG.secretNotes || [];
 
     photos.forEach((src, i) => {
       const slide = document.createElement('div');
       slide.className = 'carousel-slide';
 
       slide.innerHTML = `
-        <div class="polaroid-card" id="polaroid-${i}" role="button" aria-label="Foto ${i+1}: Tap untuk membalik">
+        <div class="polaroid-card" id="polaroid-${i}" role="button" aria-label="Foto ${i + 1}: Tap untuk membalik">
           <!-- Front Face -->
           <div class="polaroid-front">
             <div class="polaroid-photo-box">
-              <img src="${src}" alt="Kenangan ${i+1}" loading="lazy" />
+              <img src="${src}" alt="Kenangan ${i + 1}" loading="lazy" />
             </div>
             <p class="polaroid-front-caption">${captions[i] || 'Momen indah bersamamu ✨'}</p>
             <span class="polaroid-flip-hint">🔄 Tap untuk baca pesan rahasia</span>
@@ -1039,8 +1039,8 @@ const App = {
   },
 
   setCarousel(idx) {
-    const track  = document.getElementById('carousel-track');
-    const dots   = document.querySelectorAll('.c-dot');
+    const track = document.getElementById('carousel-track');
+    const dots = document.querySelectorAll('.c-dot');
     const photos = CONFIG.memoryPhotos || [];
 
     if (!track) return;
@@ -1079,15 +1079,15 @@ const App = {
      SCENE 5 — THE PRANK ZONK & REAL GIFT REVEAL
      =========================================================== */
   initScene5() {
-    const btnOpenGift  = document.getElementById('btn-open-gift');
-    const giftBox      = document.getElementById('gift-box');
-    const giftPre      = document.getElementById('gift-pre');
-    const giftZonk     = document.getElementById('gift-zonk');
-    const giftPost     = document.getElementById('gift-post');
+    const btnOpenGift = document.getElementById('btn-open-gift');
+    const giftBox = document.getElementById('gift-box');
+    const giftPre = document.getElementById('gift-pre');
+    const giftZonk = document.getElementById('gift-zonk');
+    const giftPost = document.getElementById('gift-post');
     const btnClaimFake = document.getElementById('btn-claim-fake');
-    const zonkNotice   = document.getElementById('zonk-notice');
-    const btnOpenReal  = document.getElementById('btn-open-real');
-    const btnNext      = document.getElementById('btn-s5-next');
+    const zonkNotice = document.getElementById('zonk-notice');
+    const btnOpenReal = document.getElementById('btn-open-real');
+    const btnNext = document.getElementById('btn-s5-next');
 
     // Tap gift box -> Triggers PRANK ZONK first
     btnOpenGift.addEventListener('click', () => {
@@ -1146,17 +1146,17 @@ const App = {
      SCENE 6 — THE HEARTFELT ENDING (LETTER, LANTERN & HUG)
      =========================================================== */
   initScene6() {
-    const btnSkip        = document.getElementById('btn-skip-typing');
+    const btnSkip = document.getElementById('btn-skip-typing');
     const lanternSection = document.getElementById('lantern-section');
-    const btnFlyLantern  = document.getElementById('btn-fly-lantern');
-    const wishInput      = document.getElementById('wish-input');
-    const lanternStatus  = document.getElementById('lantern-status');
-    const hugSection     = document.getElementById('hug-section');
-    const btnHugHold     = document.getElementById('btn-hug-hold');
-    const hugRingFill    = document.getElementById('hug-ring-fill');
-    const hugBtnText     = document.getElementById('hug-btn-text');
-    const finalWords     = document.getElementById('final-words');
-    const btnReplay      = document.getElementById('btn-replay');
+    const btnFlyLantern = document.getElementById('btn-fly-lantern');
+    const wishInput = document.getElementById('wish-input');
+    const lanternStatus = document.getElementById('lantern-status');
+    const hugSection = document.getElementById('hug-section');
+    const btnHugHold = document.getElementById('btn-hug-hold');
+    const hugRingFill = document.getElementById('hug-ring-fill');
+    const hugBtnText = document.getElementById('hug-btn-text');
+    const finalWords = document.getElementById('final-words');
+    const btnReplay = document.getElementById('btn-replay');
 
     // Skip typing
     btnSkip.addEventListener('click', () => {
@@ -1241,13 +1241,13 @@ const App = {
 
   startTypingLetter() {
     if (this.typingDone) return;
-    const el     = document.getElementById('letter-text');
+    const el = document.getElementById('letter-text');
     const cursor = document.getElementById('letter-cursor');
     if (!el) return;
 
     el.textContent = '';
     const text = CONFIG.finalLetter || '';
-    let   i    = 0;
+    let i = 0;
 
     const type = () => {
       if (i < text.length) {
@@ -1306,12 +1306,12 @@ const App = {
 
   onTypingComplete() {
     this.typingDone = true;
-    const cursor    = document.getElementById('letter-cursor');
-    const closing   = document.getElementById('letter-closing');
-    const btnSkip   = document.getElementById('btn-skip-typing');
-    const lantern   = document.getElementById('lantern-section');
+    const cursor = document.getElementById('letter-cursor');
+    const closing = document.getElementById('letter-closing');
+    const btnSkip = document.getElementById('btn-skip-typing');
+    const lantern = document.getElementById('lantern-section');
 
-    if (cursor)  cursor.style.display = 'none';
+    if (cursor) cursor.style.display = 'none';
     if (closing) closing.classList.remove('hidden');
     if (btnSkip) btnSkip.style.display = 'none';
 
@@ -1330,7 +1330,7 @@ const App = {
       const lantern = document.createElement('div');
       lantern.className = 'flying-lantern';
       const drift = (Math.random() * 80 - 40);
-      const dur   = Math.random() * 3 + 6;
+      const dur = Math.random() * 3 + 6;
       lantern.style.cssText = `
         left: ${20 + Math.random() * 60}%;
         --drift: ${drift}px;
@@ -1348,9 +1348,9 @@ const App = {
     this.launchHearts();
 
     const btnHugHold = document.getElementById('btn-hug-hold');
-    const hugText    = document.getElementById('hug-btn-text');
+    const hugText = document.getElementById('hug-btn-text');
     const finalWords = document.getElementById('final-words');
-    const btnReplay  = document.getElementById('btn-replay');
+    const btnReplay = document.getElementById('btn-replay');
 
     btnHugHold.style.pointerEvents = 'none';
     btnHugHold.style.background = 'linear-gradient(135deg, #FF6B95, #FFD166)';
@@ -1372,8 +1372,8 @@ const App = {
       heart.className = 'fheart';
       heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
       const size = Math.random() * 22 + 18;
-      const dur  = Math.random() * 3 + 3.5;
-      const rot  = Math.random() * 40 - 20;
+      const dur = Math.random() * 3 + 3.5;
+      const rot = Math.random() * 40 - 20;
       heart.style.cssText = `
         --size:${size}px; font-size:${size}px;
         --dur:${dur}s;
@@ -1393,7 +1393,7 @@ const App = {
   replayAll() {
     // 1. Reset Scene 1
     this.envelopeOpened = false;
-    const lid    = document.getElementById('env-lid');
+    const lid = document.getElementById('env-lid');
     const letter = document.getElementById('env-letter');
     if (lid) {
       lid.style.transition = '';
@@ -1411,7 +1411,7 @@ const App = {
     }
     // Reset modal surat interaktif
     const modal = document.getElementById('letter-modal');
-    const card  = document.getElementById('paper-fold-card');
+    const card = document.getElementById('paper-fold-card');
     if (modal) {
       modal.classList.remove('active');
       modal.classList.add('hidden');
@@ -1579,10 +1579,10 @@ const App = {
      MUSIC PLAYER (AUTOPLAY & DYNAMIC TRACK CROSSFADE)
      =========================================================== */
   initMusic() {
-    const audio  = document.getElementById('bgm');
+    const audio = document.getElementById('bgm');
     const player = document.getElementById('music-player');
-    const btn    = document.getElementById('music-btn');
-    const label  = document.getElementById('music-label');
+    const btn = document.getElementById('music-btn');
+    const label = document.getElementById('music-label');
 
     if (!audio) return;
 
@@ -1590,7 +1590,7 @@ const App = {
     audio.src = initialSrc;
     audio.dataset.currentTrack = initialSrc;
     audio.volume = CONFIG.musicVolume != null ? CONFIG.musicVolume : 0.28;
-    audio.loop   = true;
+    audio.loop = true;
 
     const showPlayer = () => player.classList.remove('hidden');
 
@@ -1614,10 +1614,10 @@ const App = {
         playPromise.then(() => {
           this.musicReady = true;
           fadeIn(CONFIG.musicVolume || 0.28);
-          btn.textContent   = '🎵';
+          btn.textContent = '🎵';
           label.textContent = 'Music on';
         }).catch(() => {
-          btn.textContent   = '▶';
+          btn.textContent = '▶';
           label.textContent = 'Play';
         });
       }
@@ -1632,7 +1632,7 @@ const App = {
           this.musicReady = true;
           showPlayer();
           fadeIn(CONFIG.musicVolume || 0.28);
-          btn.textContent   = '🎵';
+          btn.textContent = '🎵';
           label.textContent = 'Music on';
         }).catch(() => {
           // 2. Jika browser (Chrome Android) memblokir autoplay sebelum user gesture:
@@ -1659,13 +1659,13 @@ const App = {
         if (p) {
           p.then(() => {
             fadeIn(CONFIG.musicVolume || 0.28);
-            btn.textContent   = '🎵';
+            btn.textContent = '🎵';
             label.textContent = 'Music on';
-          }).catch(() => {});
+          }).catch(() => { });
         }
       } else {
         audio.pause();
-        btn.textContent   = '▶';
+        btn.textContent = '▶';
         label.textContent = 'Play';
       }
     });
@@ -1673,14 +1673,14 @@ const App = {
     audio.addEventListener('error', () => {
       // Graceful fallback jika file mp3 belum dimasukkan oleh user
       label.textContent = 'No audio';
-      btn.textContent   = '🔇';
+      btn.textContent = '🔇';
     });
   },
 
   /* ── Crossfade Switch Music (misal pindah ke Scene 6 Ending) ── */
   switchMusic(newSrc) {
     const audio = document.getElementById('bgm');
-    const btn   = document.getElementById('music-btn');
+    const btn = document.getElementById('music-btn');
     const label = document.getElementById('music-label');
     if (!audio || !newSrc || audio.dataset.currentTrack === newSrc) return;
 
@@ -1710,7 +1710,7 @@ const App = {
                   audio.volume = inVol;
                 }
               }, 40);
-            }).catch(() => {});
+            }).catch(() => { });
           }
         } else {
           audio.volume = Math.max(0, curVol);
@@ -1723,21 +1723,21 @@ const App = {
     }
   },
 
-  tryPlayMusic() {},
+  tryPlayMusic() { },
 
   /* ===========================================================
      CONFETTI ENGINE
      =========================================================== */
-  confettiCtx    : null,
-  confettiPieces : [],
-  confettiAnimId : null,
+  confettiCtx: null,
+  confettiPieces: [],
+  confettiAnimId: null,
 
   initConfetti() {
     const canvas = document.getElementById('confetti-canvas');
     if (!canvas) return;
     this.confettiCtx = canvas.getContext('2d');
     const resize = () => {
-      canvas.width  = window.innerWidth;
+      canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     resize();
@@ -1745,7 +1745,7 @@ const App = {
   },
 
   fireConfetti() {
-    const ctx    = this.confettiCtx;
+    const ctx = this.confettiCtx;
     const canvas = document.getElementById('confetti-canvas');
     if (!ctx || !canvas) return;
 
@@ -1754,16 +1754,16 @@ const App = {
 
     for (let i = 0; i < 150; i++) {
       this.confettiPieces.push({
-        x    : Math.random() * canvas.width,
-        y    : Math.random() * canvas.height * -0.5 - 10,
-        w    : Math.random() * 10 + 5,
-        h    : Math.random() * 6 + 3,
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height * -0.5 - 10,
+        w: Math.random() * 10 + 5,
+        h: Math.random() * 6 + 3,
         color: colors[Math.floor(Math.random() * colors.length)],
-        vx   : Math.random() * 4 - 2,
-        vy   : Math.random() * 4 + 2,
-        rot  : Math.random() * 360,
-        rVel : Math.random() * 8 - 4,
-        life : 1,
+        vx: Math.random() * 4 - 2,
+        vy: Math.random() * 4 + 2,
+        rot: Math.random() * 360,
+        rVel: Math.random() * 8 - 4,
+        life: 1,
         decay: Math.random() * 0.006 + 0.003,
       });
     }
@@ -1773,7 +1773,7 @@ const App = {
   },
 
   animateConfetti() {
-    const ctx    = this.confettiCtx;
+    const ctx = this.confettiCtx;
     const canvas = document.getElementById('confetti-canvas');
     if (!ctx || !canvas) return;
 
@@ -1783,11 +1783,11 @@ const App = {
     this.confettiPieces.forEach(p => {
       if (p.life <= 0) return;
       alive = true;
-      p.x   += p.vx;
-      p.y   += p.vy;
+      p.x += p.vx;
+      p.y += p.vy;
       p.rot += p.rVel;
       p.life -= p.decay;
-      p.vy   += 0.08;
+      p.vy += 0.08;
 
       ctx.save();
       ctx.globalAlpha = Math.max(0, p.life);
@@ -1809,16 +1809,16 @@ const App = {
   /* ===========================================================
      INTERACTIVE FIREWORKS ENGINE (SCENE 5)
      =========================================================== */
-  fwCtx       : null,
-  fwParticles : [],
-  fwAnimId    : null,
+  fwCtx: null,
+  fwParticles: [],
+  fwAnimId: null,
 
   initFireworks() {
     const canvas = document.getElementById('fireworks-canvas');
     if (!canvas) return;
     this.fwCtx = canvas.getContext('2d');
     const resize = () => {
-      canvas.width  = window.innerWidth;
+      canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     resize();

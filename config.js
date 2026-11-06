@@ -26,9 +26,7 @@ const CONFIG = {
   // Hasil scan wajah yang akan muncul secara acak / bergantian
   scannerResults: [
     "Mendeteksi kadar keimutan: 99.8% (Kelebihan dosis) 🥰",
-    "Scanning usia mental: Error 404, terlalu sering begadang 🦉",
     "Hasil scan: Sah bertambah usia, makin glowing & mempesona! ✨",
-    "Analisis wajah: 100% manis, 0% gagal jadi orang keren! 🌟"
   ],
 
   // ── Scene 3 — Mini Game: Whack-a-Bintang Usil ────────────────
@@ -49,9 +47,9 @@ const CONFIG = {
   // Ganti path foto dengan file asli di folder assets/images/
   // Contoh: "./assets/images/foto1.jpg"
   memoryPhotos: [
-    "./assets/images/memory-1.svg",
-    "./assets/images/memory-2.svg",
-    "./assets/images/memory-3.svg"
+    "./assets/images/1.jpg",
+    "./assets/images/2.jpg",
+    "./assets/images/3.jpg"
   ],
 
   // Caption depan foto polaroid
@@ -63,18 +61,18 @@ const CONFIG = {
 
   // Pesan RAHASIA di belakang foto (muncul saat kartu di-flip / dibalik)
   secretNotes: [
-    "Psst... foto ini saksi betapa berharganya momen waktu itu. Jangan pernah lupa cara tertawa lepas ya! 📸",
-    "Setiap detik yang terlewat selalu punya arti tersendiri. Terima kasih sudah selalu hadir dan bertahan. 💌",
-    "Dunia ini jauh lebih hangat dan menyenangkan karena ada kamu di dalamnya. Tetaplah jadi dirimu sendiri! 🌟"
+    "Udah banyak banget yang kita lewatin bareng, dan aku bersyukur masih bisa sama kamu sampai detik ini. Selamat bertambah umur, kesayanganku, Cintaku, Gendutku😘😘",
+    "Masih inget banget gimana excited-nya kamu malam ini. Liat kamu sebahagia itu, rasanya duniaku ikut terang rawrr. masih teringat WIIII",
+    "Awal mula dari perjalanan panjang kita. Dari momen ini aku tahu, nemenin kamu jalan ke mana pun rasanya bakal selalu seru dan nyaman AWW."
   ],
 
   // ── Scene 5 — Prank Zonk Sebelum Hadiah Utama ───────────────
   zonkPrize: {
     badge: "🎉 SELAMAT! KAMU MENANG:",
     title: "Voucher Gratis Overthinking 1 Tahun! 🧠",
-    subtitle: "Berlaku setiap jam 2 pagi sambil scroll medsos dan mikirin hal random.",
+    subtitle: "Berlaku setiap aku keluar rumah ye NDUTTTT.",
     fakeButton: "Ambil Voucher",
-    realNotice: "Eits, bercanda ding! Mana mungkin kadonya cuma begituan... 😜",
+    realNotice: "Eits, bercanda dong! Mana mungkin kadonya cuma begituan, NANTI NYUSUL KADO BENERANNYA😜",
     realButton: "🎀 Buka Kado yang Aslinya!"
   },
 
@@ -89,29 +87,19 @@ const CONFIG = {
   // ── Scene 6 — Surat Emosional Penutup ──────────────────────
   finalLetter: `Happy Birthday!
 
-Hari ini bukan sekadar tentang bertambahnya usia, tetapi juga tentang perjalanan panjang yang sudah kamu lewati.
+Nggak terasa, sekarang kamu sudah bertambah usia lagi. Semoga di umur yang baru ini, banyak hal baik datang ke hidup kamu.
 
-Mungkin tidak semua hari berjalan sesuai harapan. Ada hari yang menyenangkan, ada juga hari yang terasa begitu berat dan melelahkan. Tapi lihatlah dirimu hari ini — kamu berhasil melewatinya, dan kamu sudah sampai sejauh ini.
+Aku tahu mungkin nggak semua hal berjalan sesuai rencana. Ada banyak hal yang harus kamu hadapi, ada yang menyenangkan dan mungkin ada juga yang cukup melelahkan. Tapi apa pun itu, aku harap kamu tetap bisa menikmati setiap prosesnya dan nggak terlalu keras sama diri sendiri.
 
-Terima kasih sudah bertahan. Terima kasih sudah terus berusaha, dan terima kasih sudah tetap menjadi dirimu sendiri sampai detik ini.
+Aku berharap ke depannya kamu bisa lebih banyak bahagia, lebih tenang dalam menjalani hari, dan bisa mencapai hal-hal yang selama ini kamu inginkan. Semoga semua usaha dan doa kamu bisa membuahkan hasil yang baik.
 
-Di usia yang baru ini, semoga semakin banyak hal-hal baik yang datang menghampiri langkahmu. Semoga doa-doa yang selama ini kamu bisikkan dalam hening perlahan menemukan jawabannya.
+Terima kasih sudah menjadi bagian dari hidup aku. Terima kasih untuk setiap cerita, waktu, dan hal-hal sederhana yang sudah kita lewati bersama. Mungkin aku nggak selalu bisa mengungkapkan semuanya, tapi aku senang bisa mengenal dan menjalani banyak hal bersama kamu.
 
-Semoga kamu selalu diberikan kesehatan, ketenangan hati, kebahagiaan yang tulus, dan selalu dikelilingi oleh orang-orang yang tulus menyayangimu apa adanya.
+Aku juga berharap kita masih punya banyak waktu untuk menciptakan cerita-cerita baru, melewati hari baik maupun hari yang kurang baik, dan terus belajar memahami satu sama lain.
 
-Jangan terlalu keras pada dirimu sendiri, ya.
+Sekali lagi, selamat ulang tahun. Semoga tahun ini membawa banyak kebahagiaan, pengalaman baru, dan hal-hal yang bisa membuat kamu semakin bersyukur.
 
-Kamu berhak beristirahat saat lelah. Kamu berhak bahagia tanpa rasa bersalah. Dan kamu pantas mendapatkan hal-hal paling indah di dunia ini.
-
-Tidak harus selalu menjadi yang paling hebat, tidak harus selalu terlihat kuat di mata semua orang. Cukup terus melangkah dengan caramu sendiri, dan jangan lupa menikmati setiap proses kecilnya.
-
-Semoga tahun ini menjadi salah satu bab paling membahagiakan dalam buku perjalanan hidupmu.
-
-Sekali lagi, Selamat Ulang Tahun!
-
-Teruslah tumbuh, teruslah bersinar, dan jangan pernah merasa bahwa kehadiranmu tidak berarti.
-
-The world is truly a little better with you in it.`,
+Enjoy your day. You deserve all the good things coming your way.❤️`,
 
   closingMessage: "With love,",
 
@@ -120,9 +108,9 @@ The world is truly a little better with you in it.`,
   musicPath: "./assets/audio/1.mp3",
 
   // Lagu 2: Musik khusus Scene 6 Ending (Suasana emosional, haru, piano lembut)
-  endingMusicPath: "./assets/audio/2.mp3",
+  endingMusicPath: "./assets/audio/3.mp3",
 
-  musicVolume: 0.28,   // Volume musik latar (0.0 – 1.0)
+  musicVolume: 0.50,   // Volume musik latar (0.0 – 1.0)
   soundEffects: true,   // Efek suara sintesis (Web Audio API lokal)
   hapticFeedback: true,   // Getaran pelukan di smartphone Android (Vibration API)
 
