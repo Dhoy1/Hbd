@@ -49,7 +49,7 @@ const CONFIG = {
   memoryPhotos: [
     "./assets/images/1.jpg",
     "./assets/images/2.jpg",
-    "./assets/images/3.JPG"
+    "./assets/images/4.jpg"
   ],
 
   // Caption depan foto polaroid
